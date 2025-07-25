@@ -95,10 +95,10 @@ typedef int64_t   S64;
 typedef uint64_t  U64;
 
 /* Boolean Types */
-typedef S8  B8;
-typedef S16 B16;
-typedef S32 B32;
-typedef S64 B64;
+typedef U8  B8;
+typedef U16 B16;
+typedef U32 B32;
+typedef U64 B64;
 
 /* Pointer Size Types */
 typedef ptrdiff_t SZ;
@@ -133,8 +133,16 @@ typedef void (*VoidFuncPtr)(void);
 #define MAX_U32 UINT32_MAX
 #define MAX_U64 UINT64_MAX
 
-#define MACHINE_EPSILON_F32 1.1920929e-7f
-#define MACHINE_EPSILON_F64 2.220446e-16
+#include <float.h>
+
+#define EPSILON_F32 FLT_EPSILON
+#define EPSILON_F64 DBL_EPSILON
+
+#define MIN_F32 FLT_MIN
+#define MIN_F64 DBL_MIN
+
+#define MAX_F32 FLT_MAX
+#define MAX_F64 DBL_MAX
 
 #define INFINITY_F32  (1 / 0.0f)
 #define INFINITY_F64  (1 / 0.0)
@@ -146,7 +154,7 @@ typedef void (*VoidFuncPtr)(void);
 *                                 BOOL & NULL                                  *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define null 0
+#include <stdbool.h>
 
 #ifndef TRUE
 #define TRUE  1
@@ -156,21 +164,11 @@ typedef void (*VoidFuncPtr)(void);
 #define FALSE 0
 #endif
 
+#define null 0
+
 #ifndef __cplusplus
 
 #define nullptr ((void*)0)
-
-#ifndef bool
-#define bool  B8
-#endif
-
-#ifndef true
-#define true  TRUE
-#endif
-
-#ifndef false
-#define false FALSE
-#endif
 
 #endif
 
@@ -188,14 +186,14 @@ typedef void (*VoidFuncPtr)(void);
 #  error dll_export not defined for this compiler
 #endif
 
-#define StatementMacro(S) do { S } while(0)
+#define Statement(S) do { S } while(0)
 
 #ifndef AssertBreak
 #define AssertBreak() (*(int*)0 = 0)
 #endif
 
 #ifdef ENABLE_ASSERT
-#define Assert(c) StatementMacro( if (!(c)) { AssertBreak(); } )
+#define Assert(c) Statement( if (!(c)) { AssertBreak(); } )
 #else
 #define Assert(c)
 #endif
