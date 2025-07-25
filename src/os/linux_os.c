@@ -1,23 +1,11 @@
-#include <os.h>
+#include "unix_os.c"
 
-#include <sys/mman.h>
+#include <unistd.h>
 
-void* OS_MemoryReserve(UZ size)
+U32 OS_GetExecutablePath(char *buffer, U32 size)
 {
-  return mmap(nullptr, size, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
-}
-
-void  OS_MemoryCommit(void* memory, UZ size)
-{
-  mprotect(memory, size, PROT_READ | PROT_WRITE);
-}
-
-void  OS_MemoryDecommit(void* memory, UZ size)
-{
-  mprotect(memory, size, PROT_NONE);
-}
-
-void  OS_MemoryRelease(void* memory, UZ size)
-{
-  munmap(memory, size);
+  SZ count = readlink("/proc/self/exe", buffer, size);
+  if (count < 0) return 0;
+  buffer[Min((U32)count, size - 1)] = 0;
+  return (U32)count;
 }

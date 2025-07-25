@@ -21,3 +21,8 @@ void  OS_MemoryRelease(void* memory, UZ size)
 {
   VirtualFree(memory, 0, MEM_RELEASE);
 }
+
+U32 OS_GetExecutablePath(char *buffer, U32 size)
+{
+  return GetModuleFileNameA(NULL, buffer, size);
+}
