@@ -46,31 +46,6 @@ typedef struct MEM_ArenaLevel
 MEM_ArenaLevel MEM_ArenaLevelOpen(MEM_Arena *arena);
 void MEM_ArenaLevelClosee(MEM_ArenaLevel level);
 
-#define MEM_HEAP_DEFAULT_SIZE GiB(1)
-#define MEM_HEAP_COMMIT_SIZE  KiB(8)
-
-typedef struct MEM_Heap
-{
-  U8 *memory;
-  UZ size;
-  UZ commited;
-  UZ head;
-} MEM_Heap;
-
-MEM_Heap MEM_HeapInit(UZ size);
-void MEM_HeapClear(MEM_Heap *heap);
-void MEM_HeapFree(MEM_Heap *heap);
-
-void *MEM_HeapAllocate(MEM_Heap *heap, UZ size);
-void *MEM_HeapAllocateZero(MEM_Heap *heap, UZ size);
-void *MEM_HeapReallocate(MEM_Heap *heap, void *memory, UZ size);
-void MEM_HeapDeallocate(MEM_Heap *heap, void *memory);
-
-#define MEM_HeapAllocateArraySized(heap, count, size) \
-  MEM_HeapAllocateZero(arena, (count) * (size))
-#define MEM_HeapAllocateArrayTyped(heap, count, type) \
-  MEM_HeapAllocateArraySized(arena, count, sizeof(type))
-
 c_linkage_end
 
 #endif
