@@ -22,7 +22,13 @@ void  OS_MemoryRelease(void* memory, UZ size)
   VirtualFree(memory, 0, MEM_RELEASE);
 }
 
-U32 OS_GetExecutablePath(char *buffer, U32 size)
+STR OS_GetExecutablePath(MEM_Arena *arena)
 {
-  return GetModuleFileNameA(NULL, buffer, size);
+  STR result = { 0 };
+  for (U16 *buffer = malloc(KiB(4)); buffer; buffer = (free(buffer), nullptr))
+  {
+    U32 size = GetModuleFileNameW(NULL, buffer, KiB(2));
+    if (size) result = STR_From_STR16(arena, (STR16) { .str = buffer, .size = size });
+  }
+  return result;
 }

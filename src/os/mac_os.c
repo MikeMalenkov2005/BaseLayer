@@ -2,12 +2,11 @@
 
 #include <mach-o/dyld.h>
 
-U32 OS_GetExecutablePath(char *buffer, U32 size)
+STR OS_GetExecutablePath(MEM_Arena *arena)
 {
-  U32 count = 0;
-  _NSGetExecutablePath(NULL, &count);
-  if (count > size) return 0;
-  if (_NSGetExecutablePath(buffer, &count)) return 0;
-  buffer[--count] = 0;
-  return count;
+  U32 size;
+  _NSGetExecutablePath(NULL, &size);
+  STR result = STR_Allocate(arena, size);
+  if (result.str) _NSGetExecutablePath(result.str, &size);
+  return result;
 }

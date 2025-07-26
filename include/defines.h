@@ -122,16 +122,22 @@ typedef void (*VoidFuncPtr)(void);
 #define MIN_S16 INT16_MIN
 #define MIN_S32 INT32_MIN
 #define MIN_S64 INT64_MIN
+#define MIN_SZ  PTRDIFF_MIN
+#define MIN_SP  INTPTR_MIN
 
 #define MAX_S8  INT8_MAX
 #define MAX_S16 INT16_MAX
 #define MAX_S32 INT32_MAX
 #define MAX_S64 INT64_MAX
+#define MAX_SZ  PTRDIFF_MAX
+#define MAX_SP  INTPTR_MAX
 
 #define MAX_U8  UINT8_MAX
 #define MAX_U16 UINT16_MAX
 #define MAX_U32 UINT32_MAX
 #define MAX_U64 UINT64_MAX
+#define MAX_UZ  SIZE_MAX
+#define MAX_UP  UINTPTR_MAX
 
 #include <float.h>
 

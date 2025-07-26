@@ -4,7 +4,8 @@
 MEM_Arena MEM_ArenaInit(size_t size)
 {
   MEM_Arena arena;
-  arena.size = size ? size : (UZ)MEM_ARENA_DEFAULT_SIZE;
+  arena.size = size ? MEM_FastAlignUp(size, MEM_ARENA_ALIGNMENT)
+                    : (UZ)MEM_ARENA_DEFAULT_SIZE;
   arena.memory = OS_MemoryReserve(arena.size);
   arena.commited = 0;
   arena.allocated = 0;
@@ -27,7 +28,8 @@ void *MEM_ArenaAllocate(MEM_Arena *arena, UZ size)
   void *memory = nullptr;
   if (arena->memory)
   {
-    size = MEM_FastAlignUp(size, sizeof(UZ));
+    size = MEM_FastAlignUp(size, MEM_ARENA_ALIGNMENT);
+    arena->allocated = MEM_FastAlignUp(arena->allocated, MEM_ARENA_ALIGNMENT);
     memory = arena->memory + arena->allocated;
     arena->allocated += size;
     if (arena->allocated > arena->commited)
@@ -51,7 +53,8 @@ void *MEM_ArenaAllocate(MEM_Arena *arena, UZ size)
 
 void *MEM_ArenaAllocateZero(MEM_Arena *arena, UZ size)
 {
-  return MemoryZero(MEM_ArenaAllocate(arena, size), size);
+  void *memory = MEM_ArenaAllocate(arena, size);
+  return memory ? MemoryZero(memory, size) : memory;
 }
 
 void MEM_ArenaDeallocate(MEM_Arena *arena, void *memory)
@@ -69,7 +72,7 @@ void MEM_ArenaDeallocateTo(MEM_Arena *arena, UZ position)
 
 void MEM_ArenaDeallocateSize(MEM_Arena *arena, UZ size)
 {
-  arena->allocated -= Min(arena->allocated, MEM_FastAlignUp(size, sizeof(UZ)));
+  arena->allocated -= Min(arena->allocated, size);
 }
 
 MEM_ArenaLevel MEM_ArenaLevelOpen(MEM_Arena *arena)

@@ -2,10 +2,17 @@
 
 #include <unistd.h>
 
-U32 OS_GetExecutablePath(char *buffer, U32 size)
+STR OS_GetExecutablePath(MEM_Arena *arena)
 {
-  SZ count = readlink("/proc/self/exe", buffer, size);
-  if (count < 0) return 0;
-  buffer[Min((U32)count, size - 1)] = 0;
-  return (U32)count;
+  STR result = { 0 };
+  for (U8 *buffer = malloc(KiB(4)); buffer; buffer = (free(buffer), nullptr))
+  {
+    SZ size = readlink("/proc/self/exe", buffer, KiB(4));
+    if (size > 0)
+    {
+      result = STR_Allocate(arena, size + 1);
+      if (result.str) MemoryCopy(result.str, buffer, size);
+    }
+  }
+  return result;
 }

@@ -11,6 +11,7 @@ c_linkage_begin
 #define MEM_FastAlignDown(x, n) ((x) & ~((n)-1))
 #define MEM_FastAlignUp(x, n) MEM_FastAlignDown((x)+(n)-1, n)
 
+#define MEM_ARENA_ALIGNMENT     16
 #define MEM_ARENA_DEFAULT_SIZE  GiB(1)
 #define MEM_ARENA_COMMIT_SIZE   KiB(8)
 

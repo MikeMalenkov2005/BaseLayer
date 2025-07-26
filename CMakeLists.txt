@@ -3,6 +3,12 @@ project(BaseLayer C)
 
 set(CMAKE_C_STANDARD 99)
 
+option(BASE_LAYER_INCLUDE_GUI "Include GUI in the base layer build" OFF)
+
+if (BASE_LAYER_INCLUDE_GUI)
+  add_compile_definitions(BASE_LAYER_INCLUDE_GUI)
+endif()
+
 file(GLOB BASE_LAYER_SOURCES "src/*.c")
 
 add_library(${PROJECT_NAME} STATIC ${BASE_LAYER_SOURCES})
