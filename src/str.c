@@ -109,7 +109,15 @@ U64 STR_Hash64(STR string)
 
 bool STR_Equals(STR left, STR right)
 {
-  return left.size == right.size && !strncmp(left.str, right.str, left.size);
+  bool result = (left.size == right.size);
+  if (left.str != right.str)
+  {
+    for (UZ i = 0; i < left.size && result; ++i)
+    {
+      result = (left.str[i] == left.str[i]);
+    }
+  }
+  return result;
 }
 
 STR16 STR16_Make(U16 *s)
