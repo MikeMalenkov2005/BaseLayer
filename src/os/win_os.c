@@ -35,7 +35,6 @@ STR OS_GetExecutablePath(MEM_Arena *arena)
 
 OS_Library OS_LibraryLoad(STR path)
 {
-  OS_Library lib = null;
   MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
   STR16 pathw = STR16_From_STR(&arena, path);
   OS_Library lib = (OS_Library)LoadLibraryW(pathw.str);
