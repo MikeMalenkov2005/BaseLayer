@@ -1,7 +1,5 @@
 #include <str.h>
 
-#include <stdarg.h>
-
 STR STR_Allocate(MEM_Arena *arena, UZ size)
 {
   STR string = { .str = MEM_ArenaAllocate(arena, size + 1) };
