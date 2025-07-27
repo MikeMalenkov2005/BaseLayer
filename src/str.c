@@ -346,3 +346,84 @@ UZ UTF16_GetLength(STR16 string)
   }
   return length;
 }
+
+USTR USTR_Init(STR string)
+{
+  USTR result = { 0 };
+  if (string.size <= MAX_U32)
+  {
+    result.size = string.size;
+    if (result.size)
+    {
+      MemoryCopy(result.prefix.s, string.str, Min(result.size, 4));
+      if (result.size > 11)
+      {
+        result.data.p = string.str + 4;
+      }
+      else if (result.size > 4)
+      {
+        MemoryCopy(result.data.s, string.str + 4, result.size - 4);
+      }
+    }
+  }
+  return result;
+}
+
+USTR USTR_From_STR(MEM_Arena *arena, STR string)
+{
+  USTR result = { 0 };
+  if (string.size <= MAX_U32)
+  {
+    result.size = string.size;
+    if (result.size)
+    {
+      MemoryCopy(result.prefix.s, string.str, Min(result.size, 4));
+      if (result.size > 11)
+      {
+        if (result.data.p = MEM_ArenaAllocate(arena, result.size - 3))
+        {
+          MemoryCopy(result.data.p, string.str + 4, result.size - 4);
+          result.data.p[result.size - 4] = 0;
+        }
+        else MemoryZeroStruct(&result);
+      }
+      else if (result.size > 4)
+      {
+        MemoryCopy(result.data.s, string.str + 4, result.size - 4);
+      }
+    }
+  }
+  return result;
+}
+
+STR STR_From_USTR(MEM_Arena *arena, USTR string)
+{
+  STR result = STR_Allocate(arena, string.size);
+  if (result.size)
+  {
+    MemoryCopy(result.str, string.prefix.s, Min(result.size, 4));
+    if (result.size > 11)
+    {
+      MemoryCopy(result.str + 4, string.data.p, result.size - 4);
+    }
+    else if (result.size > 4)
+    {
+      MemoryCopy(result.str + 4, string.data.s, result.size - 4);
+    }
+  }
+  return result;
+}
+
+bool USTR_Equals(USTR left, USTR right)
+{
+  bool result = (left.size == right.size && left.prefix.u == right.prefix.u);
+  if (left.size < 12) result = (result && left.data.u == right.data.u);
+  else if (result && left.data.u != right.data.u)
+  {
+    for (U32 i = 0; i < left.size - 4 && result; ++i)
+    {
+      result = (left.data.p[i] == right.data.p[i]);
+    }
+  }
+  return result;
+}

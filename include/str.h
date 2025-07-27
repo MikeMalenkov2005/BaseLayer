@@ -5,6 +5,10 @@
 
 #include <string.h>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                            NORMAL (UTF-8) STRINGS                            *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 typedef struct STR
 {
   U8 *str;
@@ -27,6 +31,10 @@ U32 STR_Hash(STR string);
 U64 STR_Hash64(STR string);
 bool STR_Equals(STR left, STR right);
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                UTF-16 STRINGS                                *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 typedef struct STR16
 {
   U16 *str;
@@ -41,6 +49,10 @@ STR16 STR16_Allocate(MEM_Arena *arena, UZ size);
 STR16 STR16_From_STR(MEM_Arena *arena, STR string);
 STR STR_From_STR16(MEM_Arena *arena, STR16 string);
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                      UTF-8 & UTF-16 ENCODING & DECODING                      *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 S32 UTF8_DecodeFirst(STR string);
 UZ UTF8_Encode(U8 *buffer, UZ capacity, S32 codepoint);
 UZ UTF8_GetLength(STR string);
@@ -48,5 +60,26 @@ UZ UTF8_GetLength(STR string);
 S32 UTF16_DecodeFirst(STR16 string);
 UZ UTF16_Encode(U16 *buffer, UZ capacity, S32 codepoint);
 UZ UTF16_GetLength(STR16 string);
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                             UMBRA STYLE STRINGS                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+typedef struct USTR
+{
+  U32 size;
+  union { U32 u; U8 s[4] } prefix;
+  union { U64 u; U8 s[8]; U8 *p; } data;
+} USTR;
+
+USTR USTR_Init(STR string);
+
+#define USTR_Static(s) USTR_Init(STR_Static(s))
+#define USTR_Make(s) USTR_Init(STR_Make(s))
+
+USTR USTR_From_STR(MEM_Arena *arena, STR string);
+STR STR_From_USTR(MEM_Arena *arena, USTR string);
+
+bool USTR_Equals(USTR left, USTR right);
 
 #endif
