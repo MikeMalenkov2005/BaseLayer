@@ -29,7 +29,7 @@ OS_Library OS_LibraryLoad(STR path)
   return (OS_Library)dlopen(nt.str, RTLD_LAZY);
 }
 
-OS_LibraryFunc *OS_LibraryGetFunction(OS_Library lib, char *name)
+OS_LibraryFunc *OS_LibraryGetFunction(OS_Library lib, const char *name)
 {
   return (OS_LibraryFunc*)dlsym((void*)lib, name);
 }

@@ -20,7 +20,7 @@ typedef UP OS_Library;
 typedef void OSAPI OS_LibraryFunc(void);
 
 OS_Library OS_LibraryLoad(STR path);
-OS_LibraryFunc *OS_LibraryGetFunction(OS_Library lib, char *name);
+OS_LibraryFunc *OS_LibraryGetFunction(OS_Library lib, const char *name);
 void OS_LibraryFree(OS_Library lib);
 
 typedef UP OS_Thread;

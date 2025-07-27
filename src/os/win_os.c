@@ -43,7 +43,7 @@ OS_Library OS_LibraryLoad(STR path)
   return lib;
 }
 
-OS_LibraryFunc *OS_LibraryGetFunction(OS_Library lib, char *name)
+OS_LibraryFunc *OS_LibraryGetFunction(OS_Library lib, const char *name)
 {
   return (OS_LibraryFunc*)GetProcAddress((HMODULE)lib, name);
 }
