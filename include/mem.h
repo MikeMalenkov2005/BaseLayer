@@ -44,8 +44,8 @@ typedef struct MEM_ArenaLevel
   UZ position;
 } MEM_ArenaLevel;
 
-MEM_ArenaLevel MEM_ArenaLevelOpen(MEM_Arena *arena);
-void MEM_ArenaLevelClosee(MEM_ArenaLevel level);
+MEM_ArenaLevel MEM_ArenaLevelInit(MEM_Arena *arena);
+void MEM_ArenaLevelFree(MEM_ArenaLevel level);
 
 c_linkage_end
 

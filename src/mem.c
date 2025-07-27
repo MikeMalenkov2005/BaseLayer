@@ -75,12 +75,12 @@ void MEM_ArenaDeallocateSize(MEM_Arena *arena, UZ size)
   arena->allocated -= Min(arena->allocated, size);
 }
 
-MEM_ArenaLevel MEM_ArenaLevelOpen(MEM_Arena *arena)
+MEM_ArenaLevel MEM_ArenaLevelInit(MEM_Arena *arena)
 {
   return (MEM_ArenaLevel) { .arena = arena, .position = arena->allocated };
 }
 
-void MEM_ArenaLevelClosee(MEM_ArenaLevel level)
+void MEM_ArenaLevelFree(MEM_ArenaLevel level)
 {
   MEM_ArenaDeallocateTo(level.arena, level.position);
 }
