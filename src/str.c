@@ -417,12 +417,15 @@ STR STR_From_USTR(MEM_Arena *arena, USTR string)
 bool USTR_Equals(USTR left, USTR right)
 {
   bool result = (left.size == right.size && left.prefix.u == right.prefix.u);
-  if (left.size < 12) result = (result && left.data.u == right.data.u);
-  else if (result && left.data.u != right.data.u)
+  if (result)
   {
-    for (U32 i = 0; i < left.size - 4 && result; ++i)
+    if (left.size < 12) result = (left.data.u == right.data.u);
+    else if (left.data.u != right.data.u)
     {
-      result = (left.data.p[i] == right.data.p[i]);
+      for (U32 i = 0; i < left.size - 4 && result; ++i)
+      {
+        result = (left.data.p[i] == right.data.p[i]);
+      }
     }
   }
   return result;
