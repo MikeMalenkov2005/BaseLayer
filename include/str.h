@@ -68,7 +68,7 @@ UZ UTF16_GetLength(STR16 string);
 typedef struct USTR
 {
   U32 size;
-  union { U32 u; U8 s[4] } prefix;
+  union { U32 u; U8 s[4]; } prefix;
   union { U64 u; U8 s[8]; U8 *p; } data;
 } USTR;
 
