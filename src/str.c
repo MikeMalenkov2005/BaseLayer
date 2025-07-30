@@ -414,6 +414,54 @@ STR STR_From_USTR(MEM_Arena *arena, USTR string)
   return result;
 }
 
+U32 USTR_Hash(USTR string)
+{
+  U32 hash = 0;
+  for (UZ i = 0; i < Min(string.size, 4); i++)
+  {
+    hash = (hash << 5) - hash + string.prefix.s[i];
+  }
+  if (string.size > 11)
+  {
+    for (UZ i = 0; i < string.size - 4; i++)
+    {
+      hash = (hash << 5) - hash + string.data.p[i];
+    }
+  }
+  else if (string.size > 4)
+  {
+    for (UZ i = 0; i < string.size - 4; i++)
+    {
+      hash = (hash << 5) - hash + string.data.s[i];
+    }
+  }
+  return hash;
+}
+
+U64 USTR_Hash64(USTR string)
+{
+  U64 hash = 0;
+  for (UZ i = 0; i < Min(string.size, 4); i++)
+  {
+    hash = (hash << 5) - hash + string.prefix.s[i];
+  }
+  if (string.size > 11)
+  {
+    for (UZ i = 0; i < string.size - 4; i++)
+    {
+      hash = (hash << 5) - hash + string.data.p[i];
+    }
+  }
+  else if (string.size > 4)
+  {
+    for (UZ i = 0; i < string.size - 4; i++)
+    {
+      hash = (hash << 5) - hash + string.data.s[i];
+    }
+  }
+  return hash;
+}
+
 bool USTR_Equals(USTR left, USTR right)
 {
   bool result = (left.size == right.size && left.prefix.u == right.prefix.u);

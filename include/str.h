@@ -6,7 +6,7 @@
 #include <string.h>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*                            NORMAL (UTF-8) STRINGS                            *
+*                             ANSI & UTF-8 STRINGS                             *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 typedef struct STR
@@ -80,6 +80,8 @@ USTR USTR_Init(STR string);
 USTR USTR_From_STR(MEM_Arena *arena, STR string);
 STR STR_From_USTR(MEM_Arena *arena, USTR string);
 
+U32 USTR_Hash(USTR string);
+U64 USTR_Hash64(USTR string);
 bool USTR_Equals(USTR left, USTR right);
 
 #endif
