@@ -1,6 +1,8 @@
 #include <os.h>
 
 #include <Windows.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
 
 void* OS_MemoryReserve(UZ size)
 {
@@ -60,4 +62,21 @@ OS_Thread OS_ThreadCreate(OS_ThreadFunc *start, void *param)
 bool OS_ThreadJoin(OS_Thread thread, U32 *result)
 {
   return !WaitForSingleObject((HANDLE)thread, INFINITE) && GetExitCodeThread((HANDLE)thread, result);
+}
+
+static bool OS_NetActive = false;
+static WSADATA OS_NetInfo = { 0 };
+
+bool OS_NetStartup()
+{
+  return OS_NetActive || (OS_NetActive = WSAStartup(MAKEWORD(2, 2), &OS_NetInfo));
+}
+
+void OS_NetCleanup()
+{
+  if (OS_NetActive)
+  {
+    WSACleanup();
+    OS_NetActive = false;
+  }
 }
