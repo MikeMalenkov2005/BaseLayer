@@ -52,4 +52,52 @@ bool OS_ThreadJoin(OS_Thread thread, U32 *result);
 bool OS_NetStartup();
 void OS_NetCleanup();
 
+typedef struct OS_NetAddressIPv4
+{
+  U8 addr[4];
+} OS_NetAddressIPv4;
+
+typedef struct OS_NetAddressIPv6
+{
+  U32 flow;
+  U8 addr[16];
+  U32 scope;
+} OS_NetAddressIPv6;
+
+typedef struct OS_NetAddress
+{
+  U16 type;
+  U16 port;
+  union
+  {
+    OS_NetAddressIPv4 ipv4;
+    OS_NetAddressIPv6 ipv6;
+  };
+} OS_NetAddress;
+
+typedef enum OS_NetType
+{
+  OS_NET_TYPE_NULL,
+  OS_NET_TYPE_IPv4,
+  OS_NET_TYPE_IPv6,
+} OS_NetType;
+
+OS_NetAddress OS_NetAddressResolve(const char *node, const char *service);
+
+typedef UP OS_NetSocket;
+
+#define OS_NET_SOCKET_INVALID (~(OS_NetSocket)0)
+
+OS_NetSocket OS_NetOpenDatagramSocket(OS_NetType type);
+OS_NetSocket OS_NetOpenServer(OS_NetAddress *address, int backlog);
+OS_NetSocket OS_NetConnect(OS_NetAddress *address);
+
+void OS_NetClose(OS_NetSocket socket);
+
+SZ OS_NetSend(OS_NetSocket socket, const void *data, UZ size);
+SZ OS_NetSendTo(OS_NetSocket socket, const void *data, UZ size, OS_NetAddress *address);
+
+SZ OS_NetReceive(OS_NetSocket socket, void *buffer, UZ size);
+SZ OS_NetReceiveFrom(OS_NetSocket socket, void *buffer, UZ size, OS_NetAddress *address);
+
 #endif
