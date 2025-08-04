@@ -4,6 +4,7 @@
 #include <defines.h>
 #include <mem.h>
 #include <str.h>
+#include <ds.h>
 #include <os.h>
 
 #endif

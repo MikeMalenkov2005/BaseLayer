@@ -110,9 +110,11 @@ typedef uintptr_t UP;
 typedef float   F32;
 typedef double  F64;
 
-/* Function Pointer Type */
+/* Utility Types */
 typedef void VoidFunc(void);
 typedef void (*VoidFuncPtr)(void);
+typedef const void *ConstPtr, *ConstData;
+typedef void *VoidPtr, *Object, *Handle, *Ptr;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 BASIC LIMITS                                 *
