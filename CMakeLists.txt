@@ -17,4 +17,9 @@ if (BASE_LAYER_DYNAMIC)
 else()
   add_library(${PROJECT_NAME} STATIC ${BASE_LAYER_SOURCES})
 endif()
+
+if(WIN32)
+  target_link_libraries(${PROJECT_NAME} PRIVATE wsock32 ws2_32)
+endif()
+
 target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
