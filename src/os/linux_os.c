@@ -1,6 +1,6 @@
 #include "unix_os.c"
 
-#include <unistd.h>
+#include <stdlib.h>
 
 STR OS_GetExecutablePath(MEM_Arena *arena)
 {
