@@ -3,7 +3,7 @@ project(BaseLayer C)
 
 set(CMAKE_C_STANDARD 99)
 
-option(BASE_LAYER_DYNAMIC "Build base layer as dynamic library" OFF)
+option(BASE_LAYER_DYNAMIC "Build base layer as dynamic library" ON)
 option(BASE_LAYER_INCLUDE_GUI "Include GUI in the base layer build" OFF)
 
 if (BASE_LAYER_INCLUDE_GUI)
