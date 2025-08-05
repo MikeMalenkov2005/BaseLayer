@@ -246,7 +246,8 @@ SZ OS_NetReceive(OS_NetSocket socket, void *buffer, UZ size)
 SZ OS_NetReceiveFrom(OS_NetSocket socket, void *buffer, UZ size, OS_NetAddress *address)
 {
   U8 addr[64] = { 0 };
-  SZ result = (SZ)sendto((SOCKET)socket, buffer, (int)size, 0, &addr, sizeof(addr));
+  UZ addrlen = sizeof(addr);
+  SZ result = (SZ)recvfrom((SOCKET)socket, buffer, (int)size, 0, &addr, &addrlen);
   switch (((struct sockaddr*)addr)->sa_family)
   {
   case AF_INET:
