@@ -23,7 +23,7 @@
 # elif defined(__i386__)
 #   define ARCH_X86
 # elif defined(__aarch64__)
-#   define ARCH_ARM
+#   define ARCH_ARM64
 # elif defined(__arm__)
 #   define ARCH_ARM
 # else
@@ -48,7 +48,7 @@
 # elif defined(__i386__)
 #   define ARCH_X86
 # elif defined(__aarch64__)
-#   define ARCH_ARM
+#   define ARCH_ARM64
 # elif defined(__arm__)
 #   define ARCH_ARM
 # else
