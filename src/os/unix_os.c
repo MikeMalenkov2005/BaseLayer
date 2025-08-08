@@ -31,7 +31,7 @@ void  OS_MemoryRelease(void* memory, UZ size)
 
 OS_Library OS_LibraryLoad(STR path)
 {
-  return (OS_Library)dlopen(nt.str, RTLD_LAZY);
+  return (OS_Library)dlopen(path.str, RTLD_LAZY);
 }
 
 OS_LibraryFunc *OS_LibraryGetFunction(OS_Library lib, const char *name)
