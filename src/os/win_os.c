@@ -126,6 +126,7 @@ OS_NetAddress OS_NetAddressResolve(const char *node, const char *service)
       MemoryCopy(result.ipv6.addr, &((struct sockaddr_in6*)info->ai_addr)->sin6_addr, sizeof(result.ipv6.addr));
       break;
     }
+    freeaddrinfo(info);
   }
   return result;
 }
