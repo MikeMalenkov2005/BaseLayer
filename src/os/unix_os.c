@@ -58,6 +58,28 @@ bool OS_ThreadJoin(OS_Thread thread, U32 *result)
   return true;
 }
 
+OS_ThreadKey OS_ThreadKeyInit()
+{
+  pthread_key_t key;
+  if (pthread_key_create(&key, nullptr)) return null;
+  return (OS_ThreadKey)key + 1;
+}
+
+void OS_ThreadKeyFree(OS_ThreadKey key)
+{
+  pthread_key_delete((pthread_key_t)(key - 1));
+}
+
+void *OS_ThreadKeyGet(OS_ThreadKey key)
+{
+  return pthread_getspecific((pthread_key_t)(key - 1));
+}
+
+void OS_ThreadKeySet(OS_ThreadKey key, void *value)
+{
+  pthread_setspecific((pthread_key_t)(key - 1), value);
+}
+
 static bool OS_NetActive = false;
 
 bool OS_NetStartup()

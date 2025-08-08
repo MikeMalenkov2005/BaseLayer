@@ -66,6 +66,28 @@ bool OS_ThreadJoin(OS_Thread thread, U32 *result)
   return !WaitForSingleObject((HANDLE)thread, INFINITE) && GetExitCodeThread((HANDLE)thread, result);
 }
 
+OS_ThreadKey OS_ThreadKeyInit()
+{
+  U32 key = TlsAlloc();
+  if (key == TLS_OUT_OF_INDEXES) return null;
+  return (OS_ThreadKey)(key + 1);
+}
+
+void OS_ThreadKeyFree(OS_ThreadKey key)
+{
+  TlsFree((U32)(key - 1));
+}
+
+void *OS_ThreadKeyGet(OS_ThreadKey key)
+{
+  return TlsGetValue((U32)(key - 1));
+}
+
+void OS_ThreadKeySet(OS_ThreadKey key, void *value)
+{
+  TlsSetValue((U32)(key - 1), value);
+}
+
 static bool OS_NetActive = false;
 static WSADATA OS_NetInfo = { 0 };
 

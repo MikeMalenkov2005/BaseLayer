@@ -45,6 +45,13 @@ typedef U32 OSAPI OS_ThreadFunc(void *);
 OS_Thread OS_ThreadCreate(OS_ThreadFunc *start, void *param);
 bool OS_ThreadJoin(OS_Thread thread, U32 *result);
 
+typedef UP OS_ThreadKey;
+
+OS_ThreadKey OS_ThreadKeyInit();
+void OS_ThreadKeyFree(OS_ThreadKey key);
+void *OS_ThreadKeyGet(OS_ThreadKey key);
+void OS_ThreadKeySet(OS_ThreadKey key, void *value);
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 NETWORKING                                   *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
