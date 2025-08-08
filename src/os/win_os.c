@@ -88,6 +88,26 @@ void OS_ThreadKeySet(OS_ThreadKey key, void *value)
   TlsSetValue((U32)(key - 1), value);
 }
 
+OS_Mutex OS_MutexInit()
+{
+  return (OS_Mutex)CreateMutex(nullptr, false, nullptr);
+}
+
+bool OS_MutexFree(OS_Mutex mutex)
+{
+  return CloseHandle((HANDLE)mutex);
+}
+
+bool OS_MutexLock(OS_Mutex mutex)
+{
+  return WaitForSingleObject((HANDLE)mutex, INFINITE) == WAIT_OBJECT_0;
+}
+
+bool OS_MutexUnlock(OS_Mutex mutex)
+{
+  return ReleaseMutex((HANDLE)mutex);
+}
+
 static bool OS_NetActive = false;
 static WSADATA OS_NetInfo = { 0 };
 

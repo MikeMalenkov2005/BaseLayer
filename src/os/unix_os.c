@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 void* OS_MemoryReserve(UZ size)
 {
@@ -78,6 +79,37 @@ void *OS_ThreadKeyGet(OS_ThreadKey key)
 void OS_ThreadKeySet(OS_ThreadKey key, void *value)
 {
   pthread_setspecific((pthread_key_t)(key - 1), value);
+}
+
+OS_Mutex OS_MutexInit()
+{
+  pthread_mutex_t *mutex = malloc(sizeof(*mutex));
+  if (mutex && pthread_mutex_init(mutex, nullptr))
+  {
+    free(mutex);
+    mutex = nullptr;
+  }
+  return (OS_Mutex)mutex;
+}
+
+bool OS_MutexFree(OS_Mutex mutex)
+{
+  if (pthread_mutex_destroy((pthread_mutex_t *)mutex))
+  {
+    free((void*)mutex)
+    return true;
+  }
+  return false;
+}
+
+bool OS_MutexLock(OS_Mutex mutex)
+{
+  return !pthread_mutex_lock((pthread_mutex_t *)mutex);
+}
+
+bool OS_MutexUnlock(OS_Mutex mutex)
+{
+  return !pthread_mutex_unlock((pthread_mutex_t *)mutex);
 }
 
 static bool OS_NetActive = false;

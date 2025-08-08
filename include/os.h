@@ -52,6 +52,13 @@ void OS_ThreadKeyFree(OS_ThreadKey key);
 void *OS_ThreadKeyGet(OS_ThreadKey key);
 void OS_ThreadKeySet(OS_ThreadKey key, void *value);
 
+typedef UP OS_Mutex;
+
+OS_Mutex OS_MutexInit();
+bool OS_MutexFree(OS_Mutex mutex);
+bool OS_MutexLock(OS_Mutex mutex);
+bool OS_MutexUnlock(OS_Mutex mutex);
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 NETWORKING                                   *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
