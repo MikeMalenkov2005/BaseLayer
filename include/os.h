@@ -93,8 +93,6 @@ OS_NetAddress OS_NetAddressResolve(const char *node, const char *service);
 
 typedef UP OS_NetSocket;
 
-#define OS_NET_SOCKET_INVALID (~(OS_NetSocket)0)
-
 OS_NetSocket OS_NetOpenDatagramSocket(OS_NetType type);
 OS_NetSocket OS_NetOpenServer(OS_NetAddress *address, int backlog);
 OS_NetSocket OS_NetConnect(OS_NetAddress *address);
