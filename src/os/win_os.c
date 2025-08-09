@@ -37,6 +37,144 @@ STR OS_GetExecutablePath(MEM_Arena *arena)
   return result;
 }
 
+OS_File OS_FileOpen(STR path, U32 flags)
+{
+  MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
+  STR16 pathw = STR16_From_STR(&arena, path);
+  U32 access = 0;
+  if (flags & OS_FILE_OPEN_READ) access |= GENERIC_READ;
+  if (flags & OS_FILE_OPEN_WRITE) access |= GENERIC_WRITE;
+  U32 create = OPEN_EXISTING;
+  if (flags & OS_FILE_OPEN_CREATE)
+  {
+    create = OPEN_ALWAYS;
+    if ((flags & OS_FILE_OPEN_TRUNCATE) && (flags & OS_FILE_OPEN_WRITE))
+    {
+      create = CREATE_ALWAYS;
+    }
+  }
+  else if ((flags & OS_FILE_OPEN_TRUNCATE) && (flags & OS_FILE_OPEN_WRITE))
+  {
+    create = TRUNCATE_EXISTING;
+  }
+  HANDLE file = CreateFileW(pathw.str, access, null, nullptr, create, FILE_ATTRIBUTE_NORMAL, nullptr);
+  MEM_ArenaFree(&arena);
+  return (OS_File)file;
+}
+
+void OS_FileClose(OS_File file)
+{
+  CloseHandle((HANDLE)file);
+}
+
+U64 OS_FileTell(OS_File file)
+{
+  U32 high = 0;
+  U32 low = SetFilePointer((HANDLE)file, 0, &high, FILE_CURRENT);
+  if (low == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR) return MAX_U64;
+  return (((U64)high << 32) | low);
+}
+
+U64 OS_FileSeek(OS_File file, S64 offset, OS_FileSeekMode mode)
+{
+  U32 high = (U32)(offset >> 32);
+  U32 low = SetFilePointer((HANDLE)file, (S32)offset, &high, mode);
+  return (((U64)high << 32) | low);
+}
+
+U64 OS_FileSize(OS_File file)
+{
+  U32 high = 0;
+  U32 low = GetFileSize((HANDLE)file, &high);
+  return (((U64)high << 32) | low);
+}
+
+STR OS_FileRead(MEM_Arena *arena, OS_File file, UZ size)
+{
+  U8 *data = MEM_ArenaAllocate(arena, size + 1);
+  if (!data) return (STR) { null };
+  UZ bytes = 0;
+  while (bytes < size)
+  {
+    UZ remain = (size - bytes);
+    U32 toread = (U32)remain;
+    if (remain > MAX_U32) toread = MAX_U32;
+    U32 count = 0;
+    if (!ReadFile((HANDLE)file, data + bytes, toread, &count, nullptr))
+    {
+      MEM_ArenaDeallocate(arena, data);
+      return (STR) { null };
+    }
+    bytes += count;
+    if (count < toread) break;
+  }
+  data[bytes] = 0;
+  if (bytes < size) MEM_ArenaDeallocateSize(arena, size - bytes);
+  return (STR) { .str = data, .size = bytes };
+}
+
+UZ OS_FileWrite(OS_File file, STR data)
+{
+  UZ result = 0;
+  while (result < data.size)
+  {
+    UZ remain = (data.size - result);
+    U32 towrite = (U32)remain;
+    if (remain > MAX_U32) towrite = MAX_U32;
+    U32 count = 0;
+    if (!WriteFile((HANDLE)file, data.str + result, towrite, &count, nullptr)) break;
+    result += count;
+    if (count < towrite) break;
+  }
+  return result;
+}
+
+bool OS_FileExists(STR path)
+{
+  MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
+  STR16 pathw = STR16_From_STR(&arena, path);
+  U32 attributes = GetFileAttributesW(pathw.str);
+  MEM_ArenaFree(&arena);
+  return (attributes != INVALID_FILE_ATTRIBUTES && !(attributes & FILE_ATTRIBUTE_DIRECTORY));
+}
+
+bool OS_FileRename(STR src, STR dst)
+{
+  MEM_Arena arena = MEM_ArenaInit((src.size + dst.size + 2) << 1);
+  STR16 srcw = STR16_From_STR(&arena, src);
+  STR16 dstw = STR16_From_STR(&arena, dst);
+  bool result = MoveFileW(srcw.str, dstw.str);
+  MEM_ArenaFree(&arena);
+  return result;
+}
+
+bool OS_FileDelete(STR path)
+{
+  MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
+  STR16 pathw = STR16_From_STR(&arena, path);
+  bool result = DeleteFileW(pathw.str);
+  MEM_ArenaFree(&arena);
+  return result;
+}
+
+bool OS_FileCreateDir(STR path)
+{
+  MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
+  STR16 pathw = STR16_From_STR(&arena, path);
+  bool result = CreateDirectoryW(pathw.str, nullptr);
+  MEM_ArenaFree(&arena);
+  return result;
+}
+
+bool OS_FileDeleteDir(STR path)
+{
+  MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
+  STR16 pathw = STR16_From_STR(&arena, path);
+  bool result = RemoveDirectoryW(pathw.str);
+  MEM_ArenaFree(&arena);
+  return result;
+}
+
 OS_Library OS_LibraryLoad(STR path)
 {
   MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);

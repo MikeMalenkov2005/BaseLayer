@@ -4,6 +4,7 @@
 #include <dlfcn.h>
 #include <pthread.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
@@ -27,6 +28,107 @@ void  OS_MemoryDecommit(void* memory, UZ size)
 void  OS_MemoryRelease(void* memory, UZ size)
 {
   munmap(memory, size);
+}
+
+OS_File OS_FileOpen(STR path, U32 flags)
+{
+  int oflags = 0;
+  switch (flags & OS_FILE_OPEN_READ_WRITE)
+  {
+  case OS_FILE_OPEN_READ:
+    oflags = O_RDONLY;
+    break;
+  case OS_FILE_OPEN_WRITE:
+    oflags = O_WRONLY;
+    break;
+  case OS_FILE_OPEN_READ_WRITE:
+    oflags = O_RDWR;
+    break;
+  }
+  if (flags & OS_FILE_OPEN_CREATE) oflags |= O_CREAT;
+  if ((flags & OS_FILE_OPEN_TRUNCATE) && (flags & OS_FILE_OPEN_WRITE)) oflags |= O_TRUNK;
+  int file = open(path.str, oflags, 0666);
+  return (file < 0 ? null : ((OS_File)file + 1));
+}
+
+void OS_FileClose(OS_File file)
+{
+  close((int)(file - 1));
+}
+
+U64 OS_FileTell(OS_File file)
+{
+#if defined(OS_LINUX) && defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS < 64
+  off64_t result = lseek64((int)(file - 1), 0, SEEK_CUR);
+#else
+  off_t result = lseek((int)(file - 1), 0, SEEK_CUR);
+#endif
+  if (result == -1) return MAX_U64;
+  return (U64)result;
+}
+
+U64 OS_FileSeek(OS_File file, S64 offset, OS_FileSeekMode mode)
+{
+#if defined(OS_LINUX) && defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS < 64
+  off64_t result = lseek64((int)(file - 1), (off64_t)offset, mode);
+#else
+  off_t result = lseek((int)(file - 1), (off_t)offset, mode);
+#endif
+  if (result == -1) return MAX_U64;
+  return (U64)result;
+}
+
+U64 OS_FileSize(OS_File file)
+{
+  struct stat st;
+  if (fstat((int)(file - 1), &st) == -1) return 0;
+  return (U64)st.st_size;
+}
+
+STR OS_FileRead(MEM_Arena *arena, OS_File file, UZ size)
+{
+  U8 *data = MEM_ArenaAllocate(arena, size);
+  if (!data) return (STR) { null };
+  SZ bytes = read((int)(file - 1), data, size);
+  if (bytes == -1)
+  {
+    MEM_ArenaDeallocate(arena, data);
+    return (STR) { null };
+  }
+  data[(UZ)bytes] = 0;
+  if ((UZ)bytes < size) MEM_ArenaDeallocateSize(size - (UZ)bytes);
+  return (STR) { .str = data, .size = (UZ)bytes };
+}
+
+UZ OS_FileWrite(OS_File file, STR data)
+{
+  SZ result = write((int)(file - 1), data.str, data.size);
+  return (result == -1 ? 0 : (UZ)result);
+}
+
+bool OS_FileExists(STR path)
+{
+  return (access(path.str, F_OK) == 0);
+}
+
+bool OS_FileRename(STR src, STR dst)
+{
+  return (rename(src.str, dst.str) == 0);
+}
+
+bool OS_FileDelete(STR path)
+{
+  return (remove(path.str) != -1);
+}
+
+bool OS_FileCreateDir(STR path)
+{
+  return (mkdir(path.str, 0777) != -1)
+}
+
+bool OS_FileDeleteDir(STR path)
+{
+  return (rmdir(path.str) != -1)
 }
 
 OS_Library OS_LibraryLoad(STR path)

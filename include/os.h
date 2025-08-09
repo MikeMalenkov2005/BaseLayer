@@ -25,6 +25,47 @@ void  OS_MemoryRelease(void* memory, UZ size);
 STR OS_GetExecutablePath(MEM_Arena *arena);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                  FILE API                                    *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+typedef UP OS_File;
+
+typedef enum OS_FileOpenFlags
+{
+  OS_FILE_OPEN_READ         = 1,
+  OS_FILE_OPEN_WRITE        = 2,
+  OS_FILE_OPEN_READ_WRITE   = 3,
+  OS_FILE_OPEN_CREATE       = 4,
+  OS_FILE_OPEN_TRUNCATE     = 8,
+} OS_FileOpenFlags;
+
+typedef enum OS_FileSeekMode
+{
+  OS_FILE_SEEK_SET,
+  OS_FILE_SEEK_CUR,
+  OS_FILE_SEEK_END,
+} OS_FileSeekMode;
+
+OS_File OS_FileOpen(STR path, U32 flags);
+void OS_FileClose(OS_File file);
+
+U64 OS_FileTell(OS_File file);
+U64 OS_FileSeek(OS_File file, S64 offset, OS_FileSeekMode mode);
+
+U64 OS_FileSize(OS_File file);
+
+STR OS_FileRead(MEM_Arena *arena, OS_File file, UZ size);
+UZ OS_FileWrite(OS_File file, STR data);
+
+bool OS_FileExists(STR path);
+bool OS_FileRename(STR src, STR dst);
+
+bool OS_FileDelete(STR path);
+
+bool OS_FileCreateDir(STR path);
+bool OS_FileDeleteDir(STR path);
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                              DYNAMIC LINKING                                 *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
