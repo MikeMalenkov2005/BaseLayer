@@ -12,7 +12,7 @@
 #define DS_ArrayDefine(T)   \
 typedef struct DS_Array(T)  \
 {                           \
-  T data;                   \
+  T *data;                  \
   UZ size;                  \
 } DS_Array(T)
 
