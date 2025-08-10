@@ -16,6 +16,33 @@ typedef struct DS_Array(T)  \
   UZ size;                  \
 } DS_Array(T)
 
+#define DS_ArrayAllocate(T, arena, size) \
+  ((DS_Array(T)) { MEM_ArenaAllocate(arena, sizeof(T) * (size)), (size) })
+
+DS_ArrayDefine(S8);
+DS_ArrayDefine(S16);
+DS_ArrayDefine(S32);
+DS_ArrayDefine(S64);
+DS_ArrayDefine(SZ);
+DS_ArrayDefine(SP);
+
+DS_ArrayDefine(U8);
+DS_ArrayDefine(U16);
+DS_ArrayDefine(U32);
+DS_ArrayDefine(U64);
+DS_ArrayDefine(UZ);
+DS_ArrayDefine(UP);
+
+DS_ArrayDefine(B8);
+DS_ArrayDefine(B16);
+DS_ArrayDefine(B32);
+DS_ArrayDefine(B64);
+
+DS_ArrayDefine(F32);
+DS_ArrayDefine(F64);
+
+DS_ArrayDefine(Ptr);
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 LINKED LIST                                  *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
