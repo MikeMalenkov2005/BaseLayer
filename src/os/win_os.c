@@ -86,6 +86,7 @@ U64 OS_FileSize(OS_File file)
 {
   U32 high = 0;
   U32 low = GetFileSize((HANDLE)file, &high);
+  if (low == INVALID_FILE_SIZE && GetLastError() != NO_ERROR) return ~(U64)0;
   return (((U64)high << 32) | low);
 }
 
