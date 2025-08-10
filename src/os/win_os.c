@@ -59,18 +59,18 @@ OS_File OS_FileOpen(STR path, U32 flags)
   }
   HANDLE file = CreateFileW(pathw.str, access, null, nullptr, create, FILE_ATTRIBUTE_NORMAL, nullptr);
   MEM_ArenaFree(&arena);
-  return (OS_File)file;
+  return file == INVALID_HANDLE_VALUE ? null : ((OS_File)file + 1);
 }
 
 void OS_FileClose(OS_File file)
 {
-  CloseHandle((HANDLE)file);
+  CloseHandle((HANDLE)(file - 1));
 }
 
 U64 OS_FileTell(OS_File file)
 {
   U32 high = 0;
-  U32 low = SetFilePointer((HANDLE)file, 0, &high, FILE_CURRENT);
+  U32 low = SetFilePointer((HANDLE)(file - 1), 0, &high, FILE_CURRENT);
   if (low == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR) return MAX_U64;
   return (((U64)high << 32) | low);
 }
@@ -78,14 +78,14 @@ U64 OS_FileTell(OS_File file)
 U64 OS_FileSeek(OS_File file, S64 offset, OS_FileSeekMode mode)
 {
   U32 high = (U32)(offset >> 32);
-  U32 low = SetFilePointer((HANDLE)file, (S32)offset, &high, mode);
+  U32 low = SetFilePointer((HANDLE)(file - 1), (S32)offset, &high, mode);
   return (((U64)high << 32) | low);
 }
 
 U64 OS_FileSize(OS_File file)
 {
   U32 high = 0;
-  U32 low = GetFileSize((HANDLE)file, &high);
+  U32 low = GetFileSize((HANDLE)(file - 1), &high);
   if (low == INVALID_FILE_SIZE && GetLastError() != NO_ERROR) return ~(U64)0;
   return (((U64)high << 32) | low);
 }
@@ -99,7 +99,7 @@ UZ OS_FileRead(OS_File file, STR buffer)
     U32 toread = (U32)remain;
     if (remain > MAX_U32) toread = MAX_U32;
     U32 count = 0;
-    if (!ReadFile((HANDLE)file, buffer.str + bytes, toread, &count, nullptr)) return 0;
+    if (!ReadFile((HANDLE)(file - 1), buffer.str + bytes, toread, &count, nullptr)) return 0;
     bytes += count;
     if (count < toread) break;
   }
@@ -115,7 +115,7 @@ UZ OS_FileWrite(OS_File file, STR data)
     U32 towrite = (U32)remain;
     if (remain > MAX_U32) towrite = MAX_U32;
     U32 count = 0;
-    if (!WriteFile((HANDLE)file, data.str + result, towrite, &count, nullptr)) break;
+    if (!WriteFile((HANDLE)(file - 1), data.str + result, towrite, &count, nullptr)) break;
     result += count;
     if (count < towrite) break;
   }
