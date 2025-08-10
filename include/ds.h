@@ -1,7 +1,7 @@
 #ifndef DS_H
 #define DS_H
 
-#include <defines.h>
+#include <mem.h>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 ARRAY TYPES                                  *
@@ -34,11 +34,28 @@ typedef struct DS_List
   UZ size;
 } DS_List;
 
+#define DS_ListInit() ((DS_List) { null })
+
 DS_ListNode *DS_ListGetNode(DS_List *list, UZ index);
 DS_ListNode *DS_ListRemoveNode(DS_List *list, UZ index);
 void DS_ListInsertNode(DS_List *list, UZ index, DS_ListNode *node);
 
 void DS_ListAppendNode(DS_List *list, DS_ListNode *node);
 void DS_ListPrependNode(DS_List *list, DS_ListNode *node);
+
+DS_ListNode *DS_ListNodeAllocate(MEM_Arena *arena, UZ size);
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                 BINARY TREE                                  *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+typedef struct DS_BinaryTree
+{
+  struct DS_BinaryTree *left;
+  struct DS_BinaryTree *right;
+  U8 data[0];
+} DS_BinaryTree;
+
+DS_BinaryTree *DS_BinaryTreeAllocate(MEM_Arena *arena, UZ size);
 
 #endif

@@ -60,3 +60,13 @@ void DS_ListPrependNode(DS_List *list, DS_ListNode *node)
 {
   DS_ListInsertNode(list, 0, node);
 }
+
+DS_ListNode *DS_ListNodeAllocate(MEM_Arena *arena, UZ size)
+{
+  return (void*)MEM_ArenaAllocate(arena, sizeof(DS_ListNode) + size);
+}
+
+DS_BinaryTree *DS_BinaryTreeAllocate(MEM_Arena *arena, UZ size)
+{
+  return (void*)MEM_ArenaAllocate(arena, sizeof(DS_BinaryTree) + size);
+}
