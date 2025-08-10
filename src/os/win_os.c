@@ -204,6 +204,11 @@ bool OS_ThreadJoin(OS_Thread thread, U32 *result)
   return !WaitForSingleObject((HANDLE)thread, INFINITE) && GetExitCodeThread((HANDLE)thread, result);
 }
 
+void OS_ThreadExit(U32 code)
+{
+  ExitThread(code);
+}
+
 OS_ThreadKey OS_ThreadKeyInit()
 {
   U32 key = TlsAlloc();

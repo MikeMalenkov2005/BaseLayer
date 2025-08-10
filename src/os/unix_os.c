@@ -161,6 +161,11 @@ bool OS_ThreadJoin(OS_Thread thread, U32 *result)
   return true;
 }
 
+void OS_ThreadExit(U32 code)
+{
+  pthread_exit((void*)code);
+}
+
 OS_ThreadKey OS_ThreadKeyInit()
 {
   pthread_key_t key;

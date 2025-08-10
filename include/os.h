@@ -86,6 +86,8 @@ typedef U32 OSAPI OS_ThreadFunc(void *);
 OS_Thread OS_ThreadCreate(OS_ThreadFunc *start, void *param);
 bool OS_ThreadJoin(OS_Thread thread, U32 *result);
 
+void OS_ThreadExit(U32 code);
+
 typedef UP OS_ThreadKey;
 
 OS_ThreadKey OS_ThreadKeyInit();
