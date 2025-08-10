@@ -114,7 +114,7 @@ typedef double  F64;
 typedef void VoidFunc(void);
 typedef void (*VoidFuncPtr)(void);
 typedef const void *ConstPtr, *ConstData;
-typedef void *VoidPtr, *Object, *Handle, *Ptr;
+typedef void *VoidPtr, *Object, *Handle, *PTR;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 BASIC LIMITS                                 *

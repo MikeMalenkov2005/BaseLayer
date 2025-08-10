@@ -41,7 +41,7 @@ DS_ArrayDefine(B64);
 DS_ArrayDefine(F32);
 DS_ArrayDefine(F64);
 
-DS_ArrayDefine(Ptr);
+DS_ArrayDefine(PTR);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 LINKED LIST                                  *
