@@ -34,7 +34,7 @@ void *MEM_ArenaAllocate(MEM_Arena *arena, UZ size)
     arena->allocated += size;
     if (arena->allocated > arena->commited)
     {
-      if (arena->allocated < arena->size)
+      if (arena->allocated <= arena->size)
       {
         UZ commit = MEM_FastAlignUp(size, (UZ)MEM_ARENA_COMMIT_SIZE);
         commit = Min(commit, arena->size - arena->commited);

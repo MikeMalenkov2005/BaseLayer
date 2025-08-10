@@ -112,7 +112,7 @@ bool STR_Equals(STR left, STR right)
   {
     for (UZ i = 0; i < left.size && result; ++i)
     {
-      result = (left.str[i] == left.str[i]);
+      result = (left.str[i] == right.str[i]);
     }
   }
   return result;
