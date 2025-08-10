@@ -54,7 +54,7 @@ U64 OS_FileSeek(OS_File file, S64 offset, OS_FileSeekMode mode);
 
 U64 OS_FileSize(OS_File file);
 
-STR OS_FileRead(MEM_Arena *arena, OS_File file, UZ size);
+UZ OS_FileRead(OS_File file, STR buffer);
 UZ OS_FileWrite(OS_File file, STR data);
 
 bool OS_FileExists(STR path);

@@ -89,28 +89,20 @@ U64 OS_FileSize(OS_File file)
   return (((U64)high << 32) | low);
 }
 
-STR OS_FileRead(MEM_Arena *arena, OS_File file, UZ size)
+UZ OS_FileRead(OS_File file, STR buffer)
 {
-  U8 *data = MEM_ArenaAllocate(arena, size + 1);
-  if (!data) return (STR) { null };
   UZ bytes = 0;
-  while (bytes < size)
+  while (bytes < buffer.size)
   {
-    UZ remain = (size - bytes);
+    UZ remain = (buffer.size - bytes);
     U32 toread = (U32)remain;
     if (remain > MAX_U32) toread = MAX_U32;
     U32 count = 0;
-    if (!ReadFile((HANDLE)file, data + bytes, toread, &count, nullptr))
-    {
-      MEM_ArenaDeallocate(arena, data);
-      return (STR) { null };
-    }
+    if (!ReadFile((HANDLE)file, buffer.str + bytes, toread, &count, nullptr)) return 0;
     bytes += count;
     if (count < toread) break;
   }
-  data[bytes] = 0;
-  if (bytes < size) MEM_ArenaDeallocateSize(arena, size - bytes);
-  return (STR) { .str = data, .size = bytes };
+  return bytes;
 }
 
 UZ OS_FileWrite(OS_File file, STR data)

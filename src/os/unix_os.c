@@ -85,19 +85,11 @@ U64 OS_FileSize(OS_File file)
   return (U64)st.st_size;
 }
 
-STR OS_FileRead(MEM_Arena *arena, OS_File file, UZ size)
+UZ OS_FileRead(OS_File file, STR buffer)
 {
-  U8 *data = MEM_ArenaAllocate(arena, size);
-  if (!data) return (STR) { null };
-  SZ bytes = read((int)(file - 1), data, size);
-  if (bytes == -1)
-  {
-    MEM_ArenaDeallocate(arena, data);
-    return (STR) { null };
-  }
-  data[(UZ)bytes] = 0;
-  if ((UZ)bytes < size) MEM_ArenaDeallocateSize(size - (UZ)bytes);
-  return (STR) { .str = data, .size = (UZ)bytes };
+  SZ bytes = read((int)(file - 1), buffer.str, buffer.size);
+  if (bytes == -1) return 0;
+  return (UZ)bytes;
 }
 
 UZ OS_FileWrite(OS_File file, STR data)
