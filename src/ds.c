@@ -117,6 +117,7 @@ DS_MapEntry *DS_MapGetEntry(DS_Map *map, STR key)
   {
     if (entry->hash == hash && STR_Equals(entry->key, key)) return entry;
   }
+  return nullptr;
 }
 
 DS_MapEntry *DS_MapRemoveEntry(DS_Map *map, STR key)
