@@ -33,21 +33,18 @@ void DS_ListInsertNode(DS_List *list, UZ index, DS_ListNode *node)
   if (!list || !~list->size || index > list->size || !node || node->next || node->prev) return;
   if (index == list->size)
   {
-    node->prev = list->last;
+    if (node->prev = list->last) node->prev->next = node;
+    else list->first = node;
     list->last = node;
-    node->prev->next = node;
     list->size++;
   }
-  else
+  else for (DS_ListNode *next = DS_ListGetNode(list, index); next; next = nullptr)
   {
-    for (DS_ListNode *next = DS_ListGetNode(list, index); next; next = nullptr)
-    {
-      if (node->prev = next->prev) node->prev->next = node;
-      else list->first = node;
-      node->next = next;
-      next->prev = node;
-      list->size++;
-    }
+    if (node->prev = next->prev) node->prev->next = node;
+    else list->first = node;
+    node->next = next;
+    next->prev = node;
+    list->size++;
   }
 }
 
