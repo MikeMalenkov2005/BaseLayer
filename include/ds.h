@@ -1,7 +1,7 @@
 #ifndef DS_H
 #define DS_H
 
-#include <mem.h>
+#include <str.h>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 ARRAY TYPES                                  *
@@ -84,5 +84,51 @@ typedef struct DS_BinaryTree
 } DS_BinaryTree;
 
 DS_BinaryTree *DS_BinaryTreeAllocate(MEM_Arena *arena, UZ size);
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                               NON-BINARY TREE                                *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+typedef struct DS_Tree
+{
+  struct { struct DS_Tree *next, *prev; } siblings;
+  struct { struct DS_Tree *first, *last; UZ size; } children;
+  U8 data[0];
+} DS_Tree;
+
+DS_Tree *DS_TreeAllocate(MEM_Arena *arena, UZ size);
+
+DS_Tree *DS_TreeGetChild(DS_Tree *tree, UZ index);
+DS_Tree *DS_TreeRemoveChild(DS_Tree *tree, UZ index);
+void DS_TreeInsertChild(DS_Tree *tree, UZ index, DS_Tree *child);
+
+void DS_TreeAppendChild(DS_Tree *tree, DS_Tree *child);
+void DS_TreePrependChild(DS_Tree *tree, DS_Tree *child);
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                STR HASH MAP                                  *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+typedef struct DS_MapEntry
+{
+  struct { struct DS_MapEntry *next, *prev; } collisions;
+  STR key;
+  U64 hash;
+  U8 value[0];
+} DS_MapEntry;
+
+typedef struct DS_Map
+{
+  DS_Array(PTR) buckets;
+  UZ size;
+} DS_Map;
+
+DS_Map DS_MapAllocate(MEM_Arena *arena, UZ buckets);
+
+DS_MapEntry *DS_MapGetEntry(DS_Map *map, STR key);
+DS_MapEntry *DS_MapRemoveEntry(DS_Map *map, STR key);
+DS_MapEntry *DS_MapPutEntry(DS_Map *map, DS_MapEntry *entry);
+
+DS_MapEntry *DS_MapEntryAllocate(MEM_Arena *arena, STR key, UZ size);
 
 #endif
