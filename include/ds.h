@@ -3,6 +3,27 @@
 
 #include <str.h>
 
+#define X_FOR_BASE_TYPES  \
+X(S8);                    \
+X(S16);                   \
+X(S32);                   \
+X(S64);                   \
+X(SZ);                    \
+X(SP);                    \
+X(U8);                    \
+X(U16);                   \
+X(U32);                   \
+X(U64);                   \
+X(UZ);                    \
+X(UP);                    \
+X(B8);                    \
+X(B16);                   \
+X(B32);                   \
+X(B64);                   \
+X(F32);                   \
+X(F64);                   \
+X(PTR);
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 ARRAY TYPES                                  *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -19,116 +40,91 @@ typedef struct DS_Array(T)  \
 #define DS_ArrayAllocate(T, arena, size) \
   ((DS_Array(T)) { MEM_ArenaAllocate(arena, sizeof(T) * (size)), (size) })
 
-DS_ArrayDefine(S8);
-DS_ArrayDefine(S16);
-DS_ArrayDefine(S32);
-DS_ArrayDefine(S64);
-DS_ArrayDefine(SZ);
-DS_ArrayDefine(SP);
-
-DS_ArrayDefine(U8);
-DS_ArrayDefine(U16);
-DS_ArrayDefine(U32);
-DS_ArrayDefine(U64);
-DS_ArrayDefine(UZ);
-DS_ArrayDefine(UP);
-
-DS_ArrayDefine(B8);
-DS_ArrayDefine(B16);
-DS_ArrayDefine(B32);
-DS_ArrayDefine(B64);
-
-DS_ArrayDefine(F32);
-DS_ArrayDefine(F64);
-
-DS_ArrayDefine(PTR);
+#define X DS_ArrayDefine
+X_FOR_BASE_TYPES
+#undef X
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 LINKED LIST                                  *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-typedef struct DS_ListNode
-{
-  struct DS_ListNode *next;
-  struct DS_ListNode *prev;
-  U8 value[0];
-} DS_ListNode;
+#define DS_ListNode(T) Glue(DS_ListNode_, T)
+
+#define DS_ListNodeDefine(T)  \
+typedef struct DS_ListNode(T) \
+{                             \
+  PTR next;                   \
+  PTR prev;                   \
+  T value;                    \
+} DS_ListNode(T)
+
+#define X DS_ListNodeDefine
+X_FOR_BASE_TYPES
+#undef X
 
 typedef struct DS_List
 {
-  DS_ListNode *first;
-  DS_ListNode *last;
+  PTR first;
+  PTR last;
   UZ size;
 } DS_List;
 
 #define DS_ListInit() ((DS_List) { null })
 
-DS_ListNode *DS_ListGetNode(DS_List *list, UZ index);
-DS_ListNode *DS_ListRemoveNode(DS_List *list, UZ index);
-void DS_ListInsertNode(DS_List *list, UZ index, DS_ListNode *node);
+PTR DS_ListGetNode(DS_List *list, UZ index);
+PTR DS_ListRemoveNode(DS_List *list, UZ index);
+void DS_ListInsertNode(DS_List *list, UZ index, PTR _node);
 
-void DS_ListAppendNode(DS_List *list, DS_ListNode *node);
-void DS_ListPrependNode(DS_List *list, DS_ListNode *node);
+void DS_ListAppendNode(DS_List *list, PTR node);
+void DS_ListPrependNode(DS_List *list, PTR node);
 
-DS_ListNode *DS_ListNodeAllocate(MEM_Arena *arena, UZ size);
+#define DS_ListNodeAllocate(T, a) ((DS_ListNode(T))MEM_ArenaAllocateZero(a, sizeof(DS_ListNode(T))))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 BINARY TREE                                  *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-typedef struct DS_BinaryTree
-{
-  struct DS_BinaryTree *left;
-  struct DS_BinaryTree *right;
-  U8 data[0];
-} DS_BinaryTree;
+#define DS_BinaryTree(T) Glue(DS_BinaryTree_, T)
 
-DS_BinaryTree *DS_BinaryTreeAllocate(MEM_Arena *arena, UZ size);
+#define DS_BinaryTreeDefine(T)    \
+typedef struct DS_BinaryTree(T)   \
+{                                 \
+  struct DS_BinaryTree(T) *left;  \
+  struct DS_BinaryTree(T) *right; \
+  T value;                        \
+} DS_BinaryTree(T)
+
+#define X DS_BinaryTreeDefine
+X_FOR_BASE_TYPES
+#undef X
+
+#define DS_BinaryTreeAllocate(T, a) ((DS_BinaryTree(T))MEM_ArenaAllocateZero(a, sizeof(DS_BinaryTree(T))))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                               NON-BINARY TREE                                *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-typedef struct DS_Tree
-{
-  struct { struct DS_Tree *next, *prev; } siblings;
-  struct { struct DS_Tree *first, *last; UZ size; } children;
-  U8 data[0];
-} DS_Tree;
+#define DS_Tree(T) Glue(DS_Tree_, T)
 
-DS_Tree *DS_TreeAllocate(MEM_Arena *arena, UZ size);
+#define DS_TreeDefine(T)  \
+typedef struct DS_Tree(T) \
+{                         \
+  PTR siblings[2];        \
+  DS_List children;       \
+  T value;                \
+} DS_Tree(T)
 
-DS_Tree *DS_TreeGetChild(DS_Tree *tree, UZ index);
-DS_Tree *DS_TreeRemoveChild(DS_Tree *tree, UZ index);
-void DS_TreeInsertChild(DS_Tree *tree, UZ index, DS_Tree *child);
+#define X DS_TreeDefine
+X_FOR_BASE_TYPES
+#undef X
 
-void DS_TreeAppendChild(DS_Tree *tree, DS_Tree *child);
-void DS_TreePrependChild(DS_Tree *tree, DS_Tree *child);
+#define DS_TreeAllocate(T, a) ((DS_Tree(T))MEM_ArenaAllocateZero(a, sizeof(DS_Tree(T))))
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*                                STR HASH MAP                                  *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define DS_TreeGetChild(tree, index) DS_ListGetNode((tree)->children, index)
+#define DS_TreeRemoveChild(tree, index) DS_ListRemoveNode((tree)->children, index)
+#define DS_TreeInsertChild(tree, index, child) DS_ListInsertNode((tree)->children, index, child)
 
-typedef struct DS_MapEntry
-{
-  struct { struct DS_MapEntry *next, *prev; } collisions;
-  STR key;
-  U64 hash;
-  U8 value[0];
-} DS_MapEntry;
-
-typedef struct DS_Map
-{
-  DS_Array(PTR) buckets;
-  UZ size;
-} DS_Map;
-
-DS_Map DS_MapAllocate(MEM_Arena *arena, UZ buckets);
-
-DS_MapEntry *DS_MapGetEntry(DS_Map *map, STR key);
-DS_MapEntry *DS_MapRemoveEntry(DS_Map *map, STR key);
-DS_MapEntry *DS_MapPutEntry(DS_Map *map, DS_MapEntry *entry);
-
-DS_MapEntry *DS_MapEntryAllocate(MEM_Arena *arena, STR key, UZ size);
+#define DS_TreeAppendChild(tree, child) DS_ListAppendNode((tree)->children, child)
+#define DS_TreePrependChild(tree, child) DS_ListPrependNode((tree)->children, child)
 
 #endif
