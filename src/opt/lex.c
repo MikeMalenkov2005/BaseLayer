@@ -1,4 +1,43 @@
 #include <lex.h>
+#include <os.h>
+
+LEX LEX_Init(MEM_Arena *arena, STR source)
+{
+  LEX lex = { null };
+  if (lex.source.size && (lex.rules = MEM_ArenaAllocateArrayTyped(arena, 256, LEX_Rule))) lex.source = source;
+  return lex;
+}
+
+LEX LEX_FromFile(MEM_Arena *arena, STR path)
+{
+  LEX lex = { null };
+  OS_File file = OS_FileOpen(path, OS_FILE_OPEN_CREATE);
+  if (file)
+  {
+    U64 size = OS_FileSize(file);
+    if (size && size < MAX_UZ)
+    {
+      STR source = STR_Allocate(arena, (UZ)size);
+      if (source.str)
+      {
+        UZ bytes = OS_FileRead(file, source);
+        if (bytes)
+        {
+          if (bytes < source.size)
+          {
+            MEM_ArenaDeallocateSize(arena, source.size - bytes);
+            source.str[bytes] = 0;
+            source.size = bytes;
+          }
+          lex = LEX_Init(arena, source);
+        }
+        else MEM_ArenaDeallocate(arena, source.str);
+      }
+    }
+    OS_FileClose(file);
+  }
+  return lex;
+}
 
 void LEX_SetRuleForByte(LEX *lex, LEX_RuleCallback *callback, PTR data, U8 byte)
 {

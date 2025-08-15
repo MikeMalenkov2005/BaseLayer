@@ -68,3 +68,18 @@ This is my base layer for C programming.
 - `OS_NetSendTo` sends data with UDP socket to a given address.
 - `OS_NetReceive` recieves data from TCP socket.
 - `OS_NetReceiveFrom` recieves data from UDP socket and yields the address.
+
+## Optional features
+
+### Lexer (tokensizer)
+
+Available whenever `BASE_LAYER_INCLUDE_LEXER` is set to `ON`.
+
+- `LEX_Init` creates a lexer from a given source string.
+- `LEX_FromFile` creates a lexer from a given source file path.
+- `LEX_SetRuleForByte` sets a lexer rule for a given byte.
+- `LEX_SetRuleForRange` sets a lexer rule for a given range of bytes.
+- `LEX_CurrentByte` gets the current bytes in a lexer (for use in lexer rules).
+- `LEX_Increment` moves the lexer to the next byte (for use in lexer rules).
+- `LEX_NextToken` generates next token in the lexer and consumes it.
+- `LEX_ForEach` iterates through all the tokens in the lexer.
