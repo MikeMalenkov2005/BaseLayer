@@ -3,14 +3,14 @@ project(BaseLayer C)
 
 set(CMAKE_C_STANDARD 99)
 
-option(BASE_LAYER_INCLUDE_GUI "Include GUI in the base layer build" OFF)
+option(BASE_LAYER_INCLUDE_LEXER "Include lexer in the base layer build" OFF)
 
 if (TARGET ${PROJECT_NAME})
   message(WARNING "${PROJECT_NAME} is included twice!")
 else()
 
-  if (BASE_LAYER_INCLUDE_GUI)
-    add_compile_definitions(BASE_LAYER_INCLUDE_GUI)
+  if (BASE_LAYER_INCLUDE_LEXER)
+    add_compile_definitions(BASE_LAYER_INCLUDE_LEXER)
   endif()
 
   file(GLOB BASE_LAYER_SOURCES "src/*.c")

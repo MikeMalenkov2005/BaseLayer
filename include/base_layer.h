@@ -7,4 +7,6 @@
 #include <ds.h>
 #include <os.h>
 
+#include <opt.h>
+
 #endif

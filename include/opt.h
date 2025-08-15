@@ -1,3 +1,3 @@
 #ifdef BASE_LAYER_INCLUDE_LEXER
-#include "opt/lex.c"
+#include <opt/lex.h>
 #endif
