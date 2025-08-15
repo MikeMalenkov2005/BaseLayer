@@ -1,10 +1,10 @@
-#include <lex.h>
+#include <opt/lex.h>
 #include <os.h>
 
 LEX LEX_Init(MEM_Arena *arena, STR source)
 {
   LEX lex = { null };
-  if (lex.source.size && (lex.rules = MEM_ArenaAllocateArrayTyped(arena, 256, LEX_Rule))) lex.source = source;
+  if (source.size && (lex.rules = MEM_ArenaAllocateArrayTyped(arena, 256, LEX_Rule))) lex.source = source;
   return lex;
 }
 
