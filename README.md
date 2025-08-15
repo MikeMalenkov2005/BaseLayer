@@ -73,7 +73,7 @@ This is my base layer for C programming.
 
 ### Lexer (tokensizer)
 
-Available whenever `BASE_LAYER_INCLUDE_LEXER` is set to `ON`.
+Available if `BASE_LAYER_INCLUDE_LEXER` compiler macro is defined.
 
 - `LEX_Init` creates a lexer from a given source string.
 - `LEX_FromFile` creates a lexer from a given source file path.
