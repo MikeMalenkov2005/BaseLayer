@@ -83,3 +83,15 @@ Available if `BASE_LAYER_INCLUDE_LEXER` compiler macro is defined.
 - `LEX_Increment` moves the lexer to the next byte (for use in lexer rules).
 - `LEX_NextToken` generates next token in the lexer and consumes it.
 - `LEX_ForEach` iterates through all the tokens in the lexer.
+
+### JSON
+
+Available if `BASE_LAYER_INCLUDE_JSON` compiler macro is defined.
+
+TODO: Implement.
+
+### REX (Regular Expressions)
+
+Available if `BASE_LAYER_INCLUDE_REX` compiler macro is defined.
+
+TODO: Implement.
