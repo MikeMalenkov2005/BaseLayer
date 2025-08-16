@@ -129,4 +129,23 @@ X_FOR_BASE_TYPES
 #define DS_TreeAppendChild(tree, child) DS_ListAppendNode((tree)->children, child)
 #define DS_TreePrependChild(tree, child) DS_ListPrependNode((tree)->children, child)
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                  BIT-FIELD                                   *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+typedef struct DS_BitField
+{
+  U8 *data;
+  UZ width;
+} DS_BitField;
+
+DS_BitField DS_BitFieldAllocate(MEM_Arena *arena, UZ width);
+
+bool DS_BitFieldGet(DS_BitField bits, UZ index);
+bool DS_BitFieldFlip(DS_BitField bits, UZ index);
+void DS_BitFieldSet(DS_BitField bits, UZ index);
+void DS_BitFieldClear(DS_BitField bits, UZ index);
+
+#define DS_BitFieldSetValue(bits, index, value) (value ? DS_BitFieldSet(bits, index) : DS_BitFieldClear(bits, index))
+
 #endif

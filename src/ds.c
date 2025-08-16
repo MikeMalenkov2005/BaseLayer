@@ -64,3 +64,42 @@ void DS_ListPrependNode(DS_List *list, PTR node)
 {
   DS_ListInsertNode(list, 0, node);
 }
+
+DS_BitField DS_BitFieldAllocate(MEM_Arena *arena, UZ width)
+{
+  DS_BitField field = { MEM_ArenaAllocateZero(arena, (width + 7) >> 3) };
+  if (field.data) field.width = width;
+  return field;
+}
+
+bool DS_BitFieldGet(DS_BitField bits, UZ index)
+{
+  if (index >= bits.width) return 0;
+  UZ offset = index >> 3;
+  UZ shift = index & 7;
+  return ((bits.data[offset] >> shift) & 1);
+}
+
+bool DS_BitFieldFlip(DS_BitField bits, UZ index)
+{
+  if (index >= bits.width) return 0;
+  UZ offset = index >> 3;
+  UZ shift = index & 7;
+  return (((bits.data[offset] ^= (U8)(1 << shift)) >> shift) & 1);
+}
+
+void DS_BitFieldSet(DS_BitField bits, UZ index)
+{
+  if (index >= bits.width) return;
+  UZ offset = index >> 3;
+  UZ shift = index & 7;
+  bits.data[offset] |= (U8)(1 << shift);
+}
+
+void DS_BitFieldClear(DS_BitField bits, UZ index)
+{
+  if (index >= bits.width) return;
+  UZ offset = index >> 3;
+  UZ shift = index & 7;
+  bits.data[offset] &= ~(U8)(1 << shift);
+}
