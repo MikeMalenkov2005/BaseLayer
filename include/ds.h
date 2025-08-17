@@ -122,12 +122,12 @@ X_FOR_BASE_TYPES
 
 #define DS_TreeAllocate(T, a) ((DS_Tree(T)*)MEM_ArenaAllocateZero(a, sizeof(DS_Tree(T))))
 
-#define DS_TreeGetChild(tree, index) DS_ListGetNode((tree)->children, index)
-#define DS_TreeRemoveChild(tree, index) DS_ListRemoveNode((tree)->children, index)
-#define DS_TreeInsertChild(tree, index, child) DS_ListInsertNode((tree)->children, index, child)
+#define DS_TreeGetChild(tree, index) DS_ListGetNode(&(tree)->children, index)
+#define DS_TreeRemoveChild(tree, index) DS_ListRemoveNode(&(tree)->children, index)
+#define DS_TreeInsertChild(tree, index, child) DS_ListInsertNode(&(tree)->children, index, child)
 
-#define DS_TreeAppendChild(tree, child) DS_ListAppendNode((tree)->children, child)
-#define DS_TreePrependChild(tree, child) DS_ListPrependNode((tree)->children, child)
+#define DS_TreeAppendChild(tree, child) DS_ListAppendNode(&(tree)->children, child)
+#define DS_TreePrependChild(tree, child) DS_ListPrependNode(&(tree)->children, child)
 
 #define DS_TreeForEachChild(T, N, t) for (DS_Tree(T) *N = (t)->children.first; N; N = N->siblings[0])
 
