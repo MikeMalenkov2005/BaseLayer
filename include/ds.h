@@ -80,7 +80,7 @@ void DS_ListPrependNode(DS_List *list, PTR node);
 
 #define DS_ListNodeAllocate(T, a) ((DS_ListNode(T)*)MEM_ArenaAllocateZero(a, sizeof(DS_ListNode(T))))
 
-#define DS_ListForEach(T, N, l) for (DS_ListNode(T) N = (l)->first; N; N = N->next)
+#define DS_ListForEach(T, N, l) for (DS_ListNode(T) *N = (l)->first; N; N = N->next)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 BINARY TREE                                  *
@@ -128,6 +128,8 @@ X_FOR_BASE_TYPES
 
 #define DS_TreeAppendChild(tree, child) DS_ListAppendNode((tree)->children, child)
 #define DS_TreePrependChild(tree, child) DS_ListPrependNode((tree)->children, child)
+
+#define DS_TreeForEachChild(T, N, t) for (DS_Tree(T) *N = (t)->children.first; N; N = N->siblings[0])
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                  BIT-FIELD                                   *
