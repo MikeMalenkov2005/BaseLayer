@@ -57,6 +57,28 @@ void *MEM_ArenaAllocateZero(MEM_Arena *arena, UZ size)
   return memory ? MemoryZero(memory, size) : memory;
 }
 
+void *MEM_ArenaReallocate(MEM_Arena *arena, void *memory, UZ size)
+{
+  UZ position = (UZ)((UP)memory - (UP)arena->memory);
+  if (position < arena->allocated)
+  {
+    UZ current = arena->allocated - position;
+    if (current < size)
+    {
+      size -= current;
+      UZ offset = MEM_FastAlignUp(arena->allocated, MEM_ARENA_ALIGNMENT) - arena->allocated;
+      if (offset < size)
+      {
+        if (!MEM_ArenaAllocate(arena, size - offset)) memory = nullptr;
+      }
+      else arena->allocated += size;
+    }
+    else MEM_ArenaDeallocateSize(arena, current - size);
+  }
+  else memory = nullptr;
+  return memory;
+}
+
 void MEM_ArenaDeallocate(MEM_Arena *arena, void *memory)
 {
   MEM_ArenaDeallocateTo(arena, (UZ)((U8*)memory - arena->memory));
