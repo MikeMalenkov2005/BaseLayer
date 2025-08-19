@@ -37,8 +37,8 @@ typedef struct DS_Array(T)  \
   UZ size;                  \
 } DS_Array(T)
 
-#define DS_ArrayAllocate(T, arena, size) \
-  ((DS_Array(T)) { MEM_ArenaAllocate(arena, sizeof(T) * (size)), (size) })
+#define DS_ArrayAllocate(T, mem, size) \
+  ((DS_Array(T)) { MEM_Allocate(mem, sizeof(T) * (size)), (size) })
 
 #define X DS_ArrayDefine
 X_FOR_BASE_TYPES
@@ -78,7 +78,7 @@ void DS_ListInsertNode(DS_List *list, UZ index, PTR _node);
 void DS_ListAppendNode(DS_List *list, PTR node);
 void DS_ListPrependNode(DS_List *list, PTR node);
 
-#define DS_ListNodeAllocate(T, a) ((DS_ListNode(T)*)MEM_ArenaAllocateZero(a, sizeof(DS_ListNode(T))))
+#define DS_ListNodeAllocate(T, m) ((DS_ListNode(T)*)MEM_AllocateZero(m, sizeof(DS_ListNode(T))))
 
 #define DS_ListForEach(T, N, l) for (DS_ListNode(T) *N = (l)->first; N; N = N->next)
 
@@ -100,7 +100,7 @@ typedef struct DS_BinaryTree(T)   \
 X_FOR_BASE_TYPES
 #undef X
 
-#define DS_BinaryTreeAllocate(T, a) ((DS_BinaryTree(T)*)MEM_ArenaAllocateZero(a, sizeof(DS_BinaryTree(T))))
+#define DS_BinaryTreeAllocate(T, m) ((DS_BinaryTree(T)*)MEM_AllocateZero(m, sizeof(DS_BinaryTree(T))))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                               NON-BINARY TREE                                *
@@ -120,7 +120,7 @@ typedef struct DS_Tree(T) \
 X_FOR_BASE_TYPES
 #undef X
 
-#define DS_TreeAllocate(T, a) ((DS_Tree(T)*)MEM_ArenaAllocateZero(a, sizeof(DS_Tree(T))))
+#define DS_TreeAllocate(T, m) ((DS_Tree(T)*)MEM_AllocateZero(a, sizeof(DS_Tree(T))))
 
 #define DS_TreeGetChild(tree, index) DS_ListGetNode(&(tree)->children, index)
 #define DS_TreeRemoveChild(tree, index) DS_ListRemoveNode(&(tree)->children, index)
@@ -141,7 +141,7 @@ typedef struct DS_BitField
   UZ width;
 } DS_BitField;
 
-DS_BitField DS_BitFieldAllocate(MEM_Arena *arena, UZ width);
+DS_BitField DS_BitFieldAllocate(MEM *mem, UZ width);
 
 bool DS_BitFieldGet(DS_BitField bits, UZ index);
 bool DS_BitFieldFlip(DS_BitField bits, UZ index);

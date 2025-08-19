@@ -30,8 +30,8 @@ typedef struct LEX
 
 typedef U16 LEX_RuleCallback(LEX *lex, PTR data);
 
-LEX LEX_Init(MEM_Arena *arena, STR source);
-LEX LEX_FromFile(MEM_Arena *arena, STR path);
+LEX LEX_Init(MEM *mem, STR source);
+LEX LEX_FromFile(MEM *mem, STR path);
 
 void LEX_SetRuleForByte(LEX *lex, LEX_RuleCallback *callback, PTR data, U8 byte);
 void LEX_SetRuleForRange(LEX *lex, LEX_RuleCallback *callback, PTR data, U8 first, U8 last);

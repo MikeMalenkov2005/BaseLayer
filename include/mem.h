@@ -28,16 +28,10 @@ void MEM_ArenaClear(MEM_Arena *arena);
 void MEM_ArenaFree(MEM_Arena *arena);
 
 void *MEM_ArenaAllocate(MEM_Arena *arena, UZ size);
-void *MEM_ArenaAllocateZero(MEM_Arena *arena, UZ size);
 void *MEM_ArenaReallocate(MEM_Arena *arena, void *memory, UZ size);
 void MEM_ArenaDeallocate(MEM_Arena *arena, void *memory);
 void MEM_ArenaDeallocateTo(MEM_Arena *arena, UZ position);
 void MEM_ArenaDeallocateSize(MEM_Arena *arena, UZ size);
-
-#define MEM_ArenaAllocateArraySized(arena, count, size) \
-  MEM_ArenaAllocateZero(arena, (count) * (size))
-#define MEM_ArenaAllocateArrayTyped(arena, count, type) \
-  MEM_ArenaAllocateArraySized(arena, count, sizeof(type))
 
 typedef struct MEM_ArenaLevel
 {
@@ -63,6 +57,12 @@ typedef struct MEM
 void *MEM_Allocate(MEM *mem, UZ size);
 void *MEM_Reallocate(MEM *mem, void *memory, UZ size);
 void MEM_Deallocate(MEM *mem, void *memory);
+
+void *MEM_AllocateZero(MEM *mem, UZ size);
+#define MEM_AllocateArraySized(mem, count, size) \
+  MEM_AllocateZero(mem, (count) * (size))
+#define MEM_AllocateArrayTyped(mem, count, type) \
+  MEM_AllocateArraySized(mem, count, sizeof(type))
 
 #define MEM_FromArena(arena) ((MEM) { (PTR)MEM_ArenaAllocate, (PTR)MEM_ArenaReallocate, (PTR)MEM_ArenaDeallocate, (arena) })
 

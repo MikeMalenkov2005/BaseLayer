@@ -18,10 +18,10 @@ typedef struct STR
 #define STR_Static(s) ((STR) { .str = (U8*)(s), .size = sizeof(s) - 1 })
 #define STR_Make(s) ((STR) { .str = (U8*)(s), .size = strlen(s) })
 
-STR STR_Allocate(MEM_Arena *arena, UZ size);
-STR STR_Copy(MEM_Arena *arena, STR other);
-STR STR_Cat(MEM_Arena *arena, STR left, STR right);
-STR STR_Replace(MEM_Arena *arena, STR string, STR substring, STR replacement);
+STR STR_Allocate(MEM *mem, UZ size);
+STR STR_Copy(MEM *mem, STR other);
+STR STR_Cat(MEM *mem, STR left, STR right);
+STR STR_Replace(MEM *mem, STR string, STR substring, STR replacement);
 
 UZ STR_Count(STR string, STR substring);
 UZ STR_FindFirst(STR string, STR substring, UZ offset);
@@ -44,10 +44,10 @@ typedef struct STR16
 #define STR16_Static(s) ((STR16) { .str = (s), .size = sizeof(s) / 2 - 1 })
 STR16 STR16_Make(U16 *s);
 
-STR16 STR16_Allocate(MEM_Arena *arena, UZ size);
+STR16 STR16_Allocate(MEM *mem, UZ size);
 
-STR16 STR16_From_STR(MEM_Arena *arena, STR string);
-STR STR_From_STR16(MEM_Arena *arena, STR16 string);
+STR16 STR16_From_STR(MEM *mem, STR string);
+STR STR_From_STR16(MEM *mem, STR16 string);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                      UTF-8 & UTF-16 ENCODING & DECODING                      *
@@ -77,8 +77,8 @@ USTR USTR_Init(STR string);
 #define USTR_Static(s) USTR_Init(STR_Static(s))
 #define USTR_Make(s) USTR_Init(STR_Make(s))
 
-USTR USTR_From_STR(MEM_Arena *arena, STR string);
-STR STR_From_USTR(MEM_Arena *arena, USTR string);
+USTR USTR_From_STR(MEM *mem, STR string);
+STR STR_From_USTR(MEM *mem, USTR string);
 
 U32 USTR_Hash(USTR string);
 U64 USTR_Hash64(USTR string);

@@ -1,14 +1,14 @@
 #include <opt/lex.h>
 #include <os.h>
 
-LEX LEX_Init(MEM_Arena *arena, STR source)
+LEX LEX_Init(MEM *mem, STR source)
 {
   LEX lex = { null };
-  if (source.size && (lex.rules = MEM_ArenaAllocateArrayTyped(arena, 256, LEX_Rule))) lex.source = source;
+  if (source.size && (lex.rules = MEM_AllocateArrayTyped(mem, 256, LEX_Rule))) lex.source = source;
   return lex;
 }
 
-LEX LEX_FromFile(MEM_Arena *arena, STR path)
+LEX LEX_FromFile(MEM *mem, STR path)
 {
   LEX lex = { null };
   OS_File file = OS_FileOpen(path, OS_FILE_OPEN_CREATE);
@@ -17,7 +17,7 @@ LEX LEX_FromFile(MEM_Arena *arena, STR path)
     U64 size = OS_FileSize(file);
     if (size && size < MAX_UZ)
     {
-      STR source = STR_Allocate(arena, (UZ)size);
+      STR source = STR_Allocate(mem, (UZ)size);
       if (source.str)
       {
         UZ bytes = OS_FileRead(file, source);
@@ -25,13 +25,14 @@ LEX LEX_FromFile(MEM_Arena *arena, STR path)
         {
           if (bytes < source.size)
           {
-            MEM_ArenaDeallocateSize(arena, source.size - bytes);
+            void *str = MEM_Reallocate(mem, source.str, bytes + 1);
+            if (str) source.str = str;
             source.str[bytes] = 0;
             source.size = bytes;
           }
-          lex = LEX_Init(arena, source);
+          lex = LEX_Init(mem, source);
         }
-        else MEM_ArenaDeallocate(arena, source.str);
+        else MEM_Deallocate(mem, source.str);
       }
     }
     OS_FileClose(file);

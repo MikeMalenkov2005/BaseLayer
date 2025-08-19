@@ -51,12 +51,6 @@ void *MEM_ArenaAllocate(MEM_Arena *arena, UZ size)
   return memory;
 }
 
-void *MEM_ArenaAllocateZero(MEM_Arena *arena, UZ size)
-{
-  void *memory = MEM_ArenaAllocate(arena, size);
-  return memory ? MemoryZero(memory, size) : memory;
-}
-
 void *MEM_ArenaReallocate(MEM_Arena *arena, void *memory, UZ size)
 {
   UZ position = (UZ)((UP)memory - (UP)arena->memory);
@@ -122,3 +116,8 @@ void MEM_Deallocate(MEM *mem, void *memory)
   mem->deallocate(mem->data, memory);
 }
 
+void *MEM_AllocateZero(MEM *mem, UZ size)
+{
+  void *memory = MEM_Allocate(mem, size);
+  return memory ? MemoryZero(memory, size) : memory;
+}

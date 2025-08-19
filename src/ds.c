@@ -65,9 +65,9 @@ void DS_ListPrependNode(DS_List *list, PTR node)
   DS_ListInsertNode(list, 0, node);
 }
 
-DS_BitField DS_BitFieldAllocate(MEM_Arena *arena, UZ width)
+DS_BitField DS_BitFieldAllocate(MEM *mem, UZ width)
 {
-  DS_BitField field = { MEM_ArenaAllocateZero(arena, (width + 7) >> 3) };
+  DS_BitField field = { MEM_AllocateZero(mem, (width + 7) >> 3) };
   if (field.data) field.width = width;
   return field;
 }

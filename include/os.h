@@ -22,7 +22,7 @@ void  OS_MemoryRelease(void* memory, UZ size);
 *                                    INFO                                      *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STR OS_GetExecutablePath(MEM_Arena *arena);
+STR OS_GetExecutablePath(MEM *mem);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                  FILE API                                    *

@@ -26,13 +26,13 @@ void  OS_MemoryRelease(void* memory, UZ size)
   VirtualFree(memory, 0, MEM_RELEASE);
 }
 
-STR OS_GetExecutablePath(MEM_Arena *arena)
+STR OS_GetExecutablePath(MEM *mem)
 {
   STR result = { 0 };
   for (U16 *buffer = malloc(KiB(4)); buffer; buffer = (free(buffer), nullptr))
   {
     U32 size = GetModuleFileNameW(nullptr, buffer, KiB(2));
-    if (size) result = STR_From_STR16(arena, (STR16) { .str = buffer, .size = size });
+    if (size) result = STR_From_STR16(mem, (STR16) { .str = buffer, .size = size });
   }
   return result;
 }
@@ -40,7 +40,8 @@ STR OS_GetExecutablePath(MEM_Arena *arena)
 OS_File OS_FileOpen(STR path, U32 flags)
 {
   MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
-  STR16 pathw = STR16_From_STR(&arena, path);
+  MEM mem = MEM_FromArena(&arena);
+  STR16 pathw = STR16_From_STR(&mem, path);
   U32 access = 0;
   if (flags & OS_FILE_OPEN_READ) access |= GENERIC_READ;
   if (flags & OS_FILE_OPEN_WRITE) access |= GENERIC_WRITE;
@@ -125,7 +126,8 @@ UZ OS_FileWrite(OS_File file, STR data)
 bool OS_FileExists(STR path)
 {
   MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
-  STR16 pathw = STR16_From_STR(&arena, path);
+  MEM mem = MEM_FromArena(&arena);
+  STR16 pathw = STR16_From_STR(&mem, path);
   U32 attributes = GetFileAttributesW(pathw.str);
   MEM_ArenaFree(&arena);
   return (attributes != INVALID_FILE_ATTRIBUTES && !(attributes & FILE_ATTRIBUTE_DIRECTORY));
@@ -134,8 +136,9 @@ bool OS_FileExists(STR path)
 bool OS_FileRename(STR src, STR dst)
 {
   MEM_Arena arena = MEM_ArenaInit((src.size + dst.size + 2) << 1);
-  STR16 srcw = STR16_From_STR(&arena, src);
-  STR16 dstw = STR16_From_STR(&arena, dst);
+  MEM mem = MEM_FromArena(&arena);
+  STR16 srcw = STR16_From_STR(&mem, src);
+  STR16 dstw = STR16_From_STR(&mem, dst);
   bool result = MoveFileW(srcw.str, dstw.str);
   MEM_ArenaFree(&arena);
   return result;
@@ -144,7 +147,8 @@ bool OS_FileRename(STR src, STR dst)
 bool OS_FileDelete(STR path)
 {
   MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
-  STR16 pathw = STR16_From_STR(&arena, path);
+  MEM mem = MEM_FromArena(&arena);
+  STR16 pathw = STR16_From_STR(&mem, path);
   bool result = DeleteFileW(pathw.str);
   MEM_ArenaFree(&arena);
   return result;
@@ -153,7 +157,8 @@ bool OS_FileDelete(STR path)
 bool OS_FileCreateDir(STR path)
 {
   MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
-  STR16 pathw = STR16_From_STR(&arena, path);
+  MEM mem = MEM_FromArena(&arena);
+  STR16 pathw = STR16_From_STR(&mem, path);
   bool result = CreateDirectoryW(pathw.str, nullptr);
   MEM_ArenaFree(&arena);
   return result;
@@ -162,7 +167,8 @@ bool OS_FileCreateDir(STR path)
 bool OS_FileDeleteDir(STR path)
 {
   MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
-  STR16 pathw = STR16_From_STR(&arena, path);
+  MEM mem = MEM_FromArena(&arena);
+  STR16 pathw = STR16_From_STR(&mem, path);
   bool result = RemoveDirectoryW(pathw.str);
   MEM_ArenaFree(&arena);
   return result;
@@ -171,7 +177,8 @@ bool OS_FileDeleteDir(STR path)
 OS_Library OS_LibraryLoad(STR path)
 {
   MEM_Arena arena = MEM_ArenaInit((path.size + 1) << 1);
-  STR16 pathw = STR16_From_STR(&arena, path);
+  MEM mem = MEM_FromArena(&arena);
+  STR16 pathw = STR16_From_STR(&mem, path);
   OS_Library lib = (OS_Library)LoadLibraryW(pathw.str);
   MEM_ArenaFree(&arena);
   return lib;

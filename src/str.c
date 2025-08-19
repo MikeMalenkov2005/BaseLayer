@@ -1,8 +1,8 @@
 #include <str.h>
 
-STR STR_Allocate(MEM_Arena *arena, UZ size)
+STR STR_Allocate(MEM *mem, UZ size)
 {
-  STR string = { .str = MEM_ArenaAllocate(arena, size + 1) };
+  STR string = { .str = MEM_Allocate(mem, size + 1) };
   if (string.str)
   {
     string.str[size] = 0;
@@ -11,9 +11,9 @@ STR STR_Allocate(MEM_Arena *arena, UZ size)
   return string;
 }
 
-STR STR_Copy(MEM_Arena *arena, STR other)
+STR STR_Copy(MEM *mem, STR other)
 {
-  STR string = { .str = MEM_ArenaAllocate(arena, other.size + 1) };
+  STR string = { .str = MEM_Allocate(mem, other.size + 1) };
   if (string.str)
   {
     MemoryCopy(string.str, other.str, other.size);
@@ -22,9 +22,9 @@ STR STR_Copy(MEM_Arena *arena, STR other)
   return string;
 }
 
-STR STR_Cat(MEM_Arena *arena, STR left, STR right)
+STR STR_Cat(MEM *mem, STR left, STR right)
 {
-  STR string = STR_Allocate(arena, left.size + right.size);
+  STR string = STR_Allocate(mem, left.size + right.size);
   if (string.str)
   {
     MemoryCopy(string.str, left.str, left.size);
@@ -33,10 +33,10 @@ STR STR_Cat(MEM_Arena *arena, STR left, STR right)
   return string;
 }
 
-STR STR_Replace(MEM_Arena *arena, STR string, STR substring, STR replacement)
+STR STR_Replace(MEM *mem, STR string, STR substring, STR replacement)
 {
   UZ count = STR_Count(string, substring);
-  STR result = STR_Allocate(arena, string.size - substring.size * count + replacement.size * count);
+  STR result = STR_Allocate(mem, string.size - substring.size * count + replacement.size * count);
   for (UZ i = 0, j = 0; i < result.size && j < string.size;)
   {
     UZ found = STR_FindFirst(string, substring, i);
@@ -125,9 +125,9 @@ STR16 STR16_Make(U16 *s)
   return string;
 }
 
-STR16 STR16_Allocate(MEM_Arena *arena, UZ size)
+STR16 STR16_Allocate(MEM *mem, UZ size)
 {
-  STR16 string = { .str = MEM_ArenaAllocate(arena, (size + 1) << 1) };
+  STR16 string = { .str = MEM_Allocate(mem, (size + 1) << 1) };
   if (string.str)
   {
     string.str[size] = 0;
@@ -136,9 +136,9 @@ STR16 STR16_Allocate(MEM_Arena *arena, UZ size)
   return string;
 }
 
-STR16 STR16_From_STR(MEM_Arena *arena, STR string)
+STR16 STR16_From_STR(MEM *mem, STR string)
 {
-  STR16 result = STR16_Allocate(arena, string.size);
+  STR16 result = STR16_Allocate(mem, string.size);
   UZ size = 0;
   if (result.str)
   {
@@ -149,7 +149,7 @@ STR16 STR16_From_STR(MEM_Arena *arena, STR string)
       UZ count = UTF16_Encode(result.str + size, result.size - size, codepoint);
       if (!count)
       {
-        MEM_ArenaDeallocate(arena, result.str);
+        MEM_Deallocate(mem, result.str);
         return (STR16) { 0 };
       }
       size += count;
@@ -157,16 +157,17 @@ STR16 STR16_From_STR(MEM_Arena *arena, STR string)
       if (codepoint > 0x7FF) ++i;
       if (codepoint > 0xFFFF) ++i;
     }
-    MEM_ArenaDeallocateSize(arena, (result.size - size) << 1);
+    void *str = MEM_Reallocate(mem, result.str, (size + 1) << 1);
+    if (str) result.str = str;
     result.str[size] = 0;
     result.size = size;
   }
   return result;
 }
 
-STR STR_From_STR16(MEM_Arena *arena, STR16 string)
+STR STR_From_STR16(MEM *mem, STR16 string)
 {
-  STR result = STR_Allocate(arena, string.size * 3);
+  STR result = STR_Allocate(mem, string.size * 3);
   UZ size = 0;
   if (result.str)
   {
@@ -177,13 +178,14 @@ STR STR_From_STR16(MEM_Arena *arena, STR16 string)
       UZ count = UTF8_Encode(result.str + size, result.size - size, codepoint);
       if (!count)
       {
-        MEM_ArenaDeallocate(arena, result.str);
+        MEM_Deallocate(mem, result.str);
         return (STR) { 0 };
       }
       size += count;
       if (codepoint > 0xFFFF) ++i;
     }
-    MEM_ArenaDeallocateSize(arena, result.size - size);
+    void *str = MEM_Reallocate(mem, result.str, size + 1);
+    if (str) result.str = str;
     result.str[size] = 0;
     result.size = size;
   }
@@ -369,7 +371,7 @@ USTR USTR_Init(STR string)
   return result;
 }
 
-USTR USTR_From_STR(MEM_Arena *arena, STR string)
+USTR USTR_From_STR(MEM *mem, STR string)
 {
   USTR result = { 0 };
   if (string.size <= MAX_U32)
@@ -380,7 +382,7 @@ USTR USTR_From_STR(MEM_Arena *arena, STR string)
       MemoryCopy(result.prefix.s, string.str, Min(result.size, 4));
       if (result.size > 11)
       {
-        if (result.data.p = MEM_ArenaAllocate(arena, result.size - 3))
+        if (result.data.p = MEM_Allocate(mem, result.size - 3))
         {
           MemoryCopy(result.data.p, string.str + 4, result.size - 4);
           result.data.p[result.size - 4] = 0;
@@ -396,9 +398,9 @@ USTR USTR_From_STR(MEM_Arena *arena, STR string)
   return result;
 }
 
-STR STR_From_USTR(MEM_Arena *arena, USTR string)
+STR STR_From_USTR(MEM *mem, USTR string)
 {
-  STR result = STR_Allocate(arena, string.size);
+  STR result = STR_Allocate(mem, string.size);
   if (result.size)
   {
     MemoryCopy(result.str, string.prefix.s, Min(result.size, 4));
