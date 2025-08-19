@@ -120,7 +120,7 @@ typedef struct DS_Tree(T) \
 X_FOR_BASE_TYPES
 #undef X
 
-#define DS_TreeAllocate(T, m) ((DS_Tree(T)*)MEM_AllocateZero(a, sizeof(DS_Tree(T))))
+#define DS_TreeAllocate(T, m) ((DS_Tree(T)*)MEM_AllocateZero(m, sizeof(DS_Tree(T))))
 
 #define DS_TreeGetChild(tree, index) DS_ListGetNode(&(tree)->children, index)
 #define DS_TreeRemoveChild(tree, index) DS_ListRemoveNode(&(tree)->children, index)
