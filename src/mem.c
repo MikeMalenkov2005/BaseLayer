@@ -106,3 +106,19 @@ void MEM_ArenaLevelFree(MEM_ArenaLevel level)
 {
   MEM_ArenaDeallocateTo(level.arena, level.position);
 }
+
+void *MEM_Allocate(MEM *mem, UZ size)
+{
+  return mem->allocate(mem->data, size);
+}
+
+void *MEM_Reallocate(MEM *mem, void *memory, UZ size)
+{
+  return mem->reallocate(mem->data, memory, size);
+}
+
+void MEM_Deallocate(MEM *mem, void *memory)
+{
+  mem->deallocate(mem->data, memory);
+}
+

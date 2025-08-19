@@ -50,7 +50,7 @@ void MEM_ArenaLevelFree(MEM_ArenaLevel level);
 
 typedef void *MEM_AllocateCallback(PTR data, UZ size);
 typedef void *MEM_ReallocateCallback(PTR data, void *memory, UZ size);
-typedef void *MEM_DeallocateCallback(PTR data, void *memory);
+typedef void MEM_DeallocateCallback(PTR data, void *memory);
 
 typedef struct MEM
 {
@@ -59,6 +59,10 @@ typedef struct MEM
   MEM_DeallocateCallback *deallocate;
   PTR data;
 } MEM;
+
+void *MEM_Allocate(MEM *mem, UZ size);
+void *MEM_Reallocate(MEM *mem, void *memory, UZ size);
+void MEM_Deallocate(MEM *mem, void *memory);
 
 #define MEM_FromArena(arena) ((MEM) { (PTR)MEM_ArenaAllocate, (PTR)MEM_ArenaReallocate, (PTR)MEM_ArenaDeallocate, (arena) })
 
