@@ -11,7 +11,7 @@ PTR DS_ListGetNode(DS_List *list, UZ index)
   if (!list || index >= list->size) return nullptr;
   for (__DS_ListNode *node = list->first; node; node = node->next)
   {
-    if (index--) return node;
+    if (!index--) return node;
   }
   return nullptr;
 }
