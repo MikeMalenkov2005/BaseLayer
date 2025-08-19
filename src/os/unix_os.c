@@ -3,6 +3,7 @@
 #include <sys/mman.h>
 #include <dlfcn.h>
 #include <pthread.h>
+#include <sched.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <arpa/inet.h>
@@ -156,6 +157,11 @@ bool OS_ThreadJoin(OS_Thread thread, U32 *result)
 void OS_ThreadExit(U32 code)
 {
   pthread_exit((void*)code);
+}
+
+bool OS_ThreadYield()
+{
+  return !sched_yield();
 }
 
 OS_ThreadKey OS_ThreadKeyInit()

@@ -87,6 +87,7 @@ OS_Thread OS_ThreadCreate(OS_ThreadFunc *start, void *param);
 bool OS_ThreadJoin(OS_Thread thread, U32 *result);
 
 void OS_ThreadExit(U32 code);
+bool OS_ThreadYield();
 
 typedef UP OS_ThreadKey;
 

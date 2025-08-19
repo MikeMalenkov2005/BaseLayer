@@ -202,6 +202,11 @@ void OS_ThreadExit(U32 code)
   ExitThread(code);
 }
 
+bool OS_ThreadYield()
+{
+  return SwitchToThread();
+}
+
 OS_ThreadKey OS_ThreadKeyInit()
 {
   U32 key = TlsAlloc();
