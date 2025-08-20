@@ -121,3 +121,24 @@ void *MEM_AllocateZero(MEM *mem, UZ size)
   void *memory = MEM_Allocate(mem, size);
   return memory ? MemoryZero(memory, size) : memory;
 }
+
+#ifndef BASE_LAYER_MEM_NO_DEFAULT
+
+#include <stdlib.h>
+
+void *MEM_DefaultAllocate(PTR ignored, UZ size)
+{
+  return malloc(size);
+}
+
+void *MEM_DefaultReallocate(PTR ignored, void *memory, UZ size)
+{
+  return realloc(memory, size);
+}
+
+void MEM_DefaultDeallocate(PTR ignored, void *memory)
+{
+  free(memory);
+}
+
+#endif

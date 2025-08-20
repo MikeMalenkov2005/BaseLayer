@@ -64,7 +64,19 @@ void *MEM_AllocateZero(MEM *mem, UZ size);
 #define MEM_AllocateArrayTyped(mem, count, type) \
   MEM_AllocateArraySized(mem, count, sizeof(type))
 
+#ifndef BASE_LAYER_MEM_NO_DEFAULT
+
+void *MEM_DefaultAllocate(PTR ignored, UZ size);
+void *MEM_DefaultReallocate(PTR ignored, void *memory, UZ size);
+void MEM_DefaultDeallocate(PTR ignored, void *memory);
+
+#define MEM_Default() ((MEM) { (PTR)MEM_DefaultAllocate, (PTR)MEM_DefaultReallocate, (PTR)MEM_DefaultDeallocate })
+
+#endif
+
 #define MEM_FromArena(arena) ((MEM) { (PTR)MEM_ArenaAllocate, (PTR)MEM_ArenaReallocate, (PTR)MEM_ArenaDeallocate, (arena) })
+
+#define MEM_From_MEM(mem) ((MEM) { (PTR)MEM_Allocate, (PTR)MEM_Reallocate, (PTR)MEM_Deallocate, (mem) })
 
 c_linkage_end
 
