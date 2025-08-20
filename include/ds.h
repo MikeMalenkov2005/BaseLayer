@@ -38,7 +38,7 @@ typedef struct DS_Array(T)  \
 } DS_Array(T)
 
 #define DS_ArrayAllocate(T, mem, size) \
-  ((DS_Array(T)) { MEM_Allocate(mem, sizeof(T) * (size)), (size) })
+  ((DS_Array(T)) { MEM_AllocateArrayTyped(mem, size, T), (size) })
 
 #define X DS_ArrayDefine
 X_FOR_BASE_TYPES
