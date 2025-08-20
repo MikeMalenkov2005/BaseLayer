@@ -6,6 +6,7 @@
 #include <str.h>
 #include <ds.h>
 #include <os.h>
+#include <rc.h>
 
 #include <opt.h>
 
