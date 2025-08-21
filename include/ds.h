@@ -59,7 +59,7 @@ typedef struct DS_Vector(T) \
   UZ capacity;              \
 } DS_Vector(T)
 
-#define DS_VectorInit() ((DS_Vector(T)) { null })
+#define DS_VectorInit(T) ((DS_Vector(T)) { null })
 
 #define DS_VectorResize(mem, vec, sz) Statement(                    \
   void *__data = (vec)->data;                                       \
