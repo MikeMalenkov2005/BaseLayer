@@ -66,3 +66,30 @@ LEX_Token LEX_NextToken(LEX *lex)
   }
   return token;
 }
+
+U16 LEX_DefaultKeyWordRule(LEX *lex, LEX_DefaultKeyWordCallback *callback)
+{
+  STR word = { lex->source.str + lex->position, 0 };
+  U8 byte = LEX_CurrentByte(lex);
+  while (byte == '_' || (U8)(byte - '0') < 10 || (U8)((byte & 0xDF) - 'A') < 26)
+  {
+    LEX_Increment(lex);
+    byte = LEX_CurrentByte(lex);
+    ++word.size;
+  }
+  return callback(word);
+}
+
+U16 LEX_DefaultStringRule(LEX *lex, PTR ignored)
+{
+  U8 end = LEX_CurrentByte(lex);
+  bool skip = true;
+  for (U8 byte = end; byte && (skip || byte != end); byte = LEX_CurrentByte(lex))
+  {
+    skip = (byte == '\\');
+    LEX_Increment(lex);
+  }
+  LEX_Increment(lex);
+  return end;
+}
+

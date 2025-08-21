@@ -43,4 +43,9 @@ LEX_Token LEX_NextToken(LEX *lex);
 #define LEX_ForEach(N, lex) \
   for (LEX_Token N = LEX_NextToken(lex); N.id; N = LEX_NextToken(lex))
 
+typedef U16 LEX_DefaultKeyWordCallback(STR word);
+
+U16 LEX_DefaultKeyWordRule(LEX *lex, LEX_DefaultKeyWordCallback *callback);
+U16 LEX_DefaultStringRule(LEX *lex, PTR ignored);
+
 #endif
