@@ -4,8 +4,21 @@
 LEX LEX_Init(MEM *mem, STR source)
 {
   LEX lex = { null };
-  if (source.size && (lex.rules = MEM_AllocateArrayTyped(mem, 256, LEX_Rule))) lex.source = source;
+  if (source.size && (lex.rules = MEM_AllocateArrayTyped(mem, 256, LEX_Rule)))
+  {
+    lex.mem = mem;
+    lex.source = source;
+  }
   return lex;
+}
+
+void LEX_Free(LEX *lex)
+{
+  if (lex->rules)
+  {
+    MEM_Deallocate(lex->mem, lex->rules);
+    MemoryZeroStruct(lex);
+  }
 }
 
 void LEX_SetRuleForByte(LEX *lex, LEX_RuleCallback *callback, PTR data, U8 byte)

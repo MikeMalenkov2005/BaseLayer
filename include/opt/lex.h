@@ -21,6 +21,7 @@ typedef struct LEX_Rule
 
 typedef struct LEX
 {
+  MEM *mem;
   LEX_Rule *rules;
   STR source;
   UZ position;
@@ -31,6 +32,7 @@ typedef struct LEX
 typedef U16 LEX_RuleCallback(LEX *lex, PTR data);
 
 LEX LEX_Init(MEM *mem, STR source);
+void LEX_Free(LEX *lex);
 
 void LEX_SetRuleForByte(LEX *lex, LEX_RuleCallback *callback, PTR data, U8 byte);
 void LEX_SetRuleForRange(LEX *lex, LEX_RuleCallback *callback, PTR data, U8 first, U8 last);
