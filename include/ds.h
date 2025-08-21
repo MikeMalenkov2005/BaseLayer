@@ -61,19 +61,19 @@ typedef struct DS_Vector(T) \
 
 #define DS_VectorInit(T) ((DS_Vector(T)) { null })
 
-#define DS_VectorResize(mem, vec, sz) Statement(                    \
-  void *__data = (vec)->data;                                       \
-  UZ __cap = (vec)->capacity;                                       \
-  __cap = MEM_FastAlignDown(__cap, 8);                              \
-  while ((sz) > __cap) __cap += 8;                                  \
-  if (__cap > (vec)->capacity)                                      \
-  {                                                                 \
-    __data = MEM_Reallocate(mem, __data, __cap * sizeof(*__data));  \
-    if (!__data) break; /* TODO: hadnle errors later! */            \
-  }                                                                 \
-  (vec)->data = __data;                                             \
-  (vec)->size = (sz);                                               \
-  (vec)->capacity = __cap;                                          \
+#define DS_VectorResize(mem, vec, sz) Statement(                        \
+  void *__data = (vec)->data;                                           \
+  UZ __cap = (vec)->capacity;                                           \
+  __cap = MEM_FastAlignDown(__cap, 8);                                  \
+  while ((sz) > __cap) __cap += 8;                                      \
+  if (__cap > (vec)->capacity)                                          \
+  {                                                                     \
+    __data = MEM_Reallocate(mem, __data, __cap * sizeof(*(vec)->data)); \
+    if (!__data) break; /* TODO: hadnle errors later! */                \
+  }                                                                     \
+  (vec)->data = __data;                                                 \
+  (vec)->size = (sz);                                                   \
+  (vec)->capacity = __cap;                                              \
 )
 
 #define DS_VectorAppend(mem, vec, val) Statement(             \
