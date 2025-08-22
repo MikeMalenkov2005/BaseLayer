@@ -44,6 +44,8 @@ typedef struct DS_Array(T)  \
 #define DS_ArrayAllocate(T, mem, size) DS_ArrayInit(T, MEM_AllocateArrayTyped(mem, size, T), size)
 #define DS_ArrayDeallocate(mem, arr) MEM_Deallocate(mem, (arr).data)
 
+#define DS_ArrayAt(arr, i) (*((i) < (arr).size ? &(arr).data[i] : nullptr))
+
 #define X DS_ArrayDefine
 X_FOR_BASE_TYPES
 #undef X
@@ -92,6 +94,8 @@ typedef struct DS_Vector(T) \
   (vec)->capacity = 0;                                \
 )
 
+#define DS_VectorAt(vec, i) (*((i) < (vec)->size ? &(vec)->data[i] : nullptr))
+
 #define X DS_VectorDefine
 X_FOR_BASE_TYPES
 #undef X
@@ -133,6 +137,8 @@ void DS_ListPrependNode(DS_List *list, PTR node);
 #define DS_ListNodeAllocate(T, m) ((DS_ListNode(T)*)MEM_AllocateZero(m, sizeof(DS_ListNode(T))))
 
 #define DS_ListForEach(T, N, l) for (DS_ListNode(T) *N = (l)->first; N; N = N->next)
+
+#define DS_ListAt(T, l, i) (*((i) < (l)->size ? &((DS_ListNode(T)*)DS_ListGetNode(l, i))->value : nullptr))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 BINARY TREE                                  *

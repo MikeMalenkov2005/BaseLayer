@@ -15,6 +15,8 @@ typedef struct STR
   UZ size;
 } STR;
 
+#define STR_At(s, i) (*((i) < (s).size ? &(s).str[i] : nullptr))
+
 #define STR_Static(s) ((STR) { .str = (U8*)(s), .size = sizeof(s) - 1 })
 #define STR_Make(s) ((STR) { .str = (U8*)(s), .size = strlen(s) })
 
@@ -40,6 +42,8 @@ typedef struct STR16
   U16 *str;
   UZ size;
 } STR16;
+
+#define STR16_At(s, i) (*((i) < (s).size ? &(s).str[i] : nullptr))
 
 #define STR16_Static(s) ((STR16) { .str = (s), .size = sizeof(s) / 2 - 1 })
 STR16 STR16_Make(U16 *s);
@@ -71,6 +75,8 @@ typedef struct USTR
   union { U32 u; U8 s[4]; } prefix;
   union { U64 u; U8 s[8]; U8 *p; } data;
 } USTR;
+
+#define USTR_At(st, i) (*((i) < (st).size ? ((i) < 4 ? &(st).prefix.s[i] : ((st).size < 12 ? &(st).data.s[i] : &(st).data.p[i])) : nullptr))
 
 USTR USTR_Init(STR string);
 
