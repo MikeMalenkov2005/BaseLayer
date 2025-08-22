@@ -48,6 +48,6 @@ LEX_Token LEX_NextToken(LEX *lex);
 typedef U16 LEX_DefaultKeyWordCallback(STR word);
 
 U16 LEX_DefaultKeyWordRule(LEX *lex, LEX_DefaultKeyWordCallback *callback);
-U16 LEX_DefaultStringRule(LEX *lex, PTR ignored);
+U16 LEX_DefaultStringRule(LEX *lex, UP escape);
 
 #endif

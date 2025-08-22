@@ -93,13 +93,13 @@ U16 LEX_DefaultKeyWordRule(LEX *lex, LEX_DefaultKeyWordCallback *callback)
   return callback(word);
 }
 
-U16 LEX_DefaultStringRule(LEX *lex, PTR ignored)
+U16 LEX_DefaultStringRule(LEX *lex, UP escape)
 {
   U8 end = LEX_CurrentByte(lex);
   bool skip = true;
   for (U8 byte = end; byte && (skip || byte != end); byte = LEX_CurrentByte(lex))
   {
-    skip = (byte == '\\');
+    skip = (byte == (U8)escape);
     LEX_Increment(lex);
   }
   LEX_Increment(lex);
