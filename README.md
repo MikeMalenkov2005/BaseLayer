@@ -76,13 +76,15 @@ This is my base layer for C programming.
 Available if `BASE_LAYER_INCLUDE_LEXER` compiler macro is defined.
 
 - `LEX_Init` creates a lexer from a given source string.
-- `LEX_FromFile` creates a lexer from a given source file path.
+- `LEX_Free` deallocates memory used by the given lexer from.
 - `LEX_SetRuleForByte` sets a lexer rule for a given byte.
 - `LEX_SetRuleForRange` sets a lexer rule for a given range of bytes.
 - `LEX_CurrentByte` gets the current bytes in a lexer (for use in lexer rules).
 - `LEX_Increment` moves the lexer to the next byte (for use in lexer rules).
 - `LEX_NextToken` generates next token in the lexer and consumes it.
 - `LEX_ForEach` iterates through all the tokens in the lexer.
+- `LEX_DefaultKeyWordRule` the default rule for lexing key words.
+- `LEX_DefaultStringRule` the default rule for lexing string literals.
 
 ### JSON
 
