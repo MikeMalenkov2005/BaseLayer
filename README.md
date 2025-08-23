@@ -86,6 +86,27 @@ Available if `BASE_LAYER_INCLUDE_LEXER` compiler macro is defined.
 - `LEX_DefaultKeyWordRule` the default rule for lexing key words.
 - `LEX_DefaultStringRule` the default rule for lexing string literals.
 
+### Intermediate Representation (IR)
+
+Available if `BASE_LAYER_INCLUDE_IR` compiler macro is defined.
+
+- `IRI_Data` creates the IRI structure from data (U32).
+- `IRI_Op` creates the IRI structure from opcode and type.
+- `IR_Init` creates the IR structure for holding the program data. (NO ARENA)
+- `IR_Free` deallocates memory used by the IR structure.
+- `IR_AddString` adds a string value to the IR.
+- `IR_AddValue` adds a non-string value to the IR.
+- `IR_AddGlobal` adds a global variable to the IR.
+- `IR_AddFunction` adds a function to the IR.
+- `IR_GetName` gets the name of an IR object by index in the names vector.
+- `IR_GetNameIndex` gets the index of the name in the names vector.
+- `IR_GetString` gets a string value from the IR.
+- `IR_GetValue` gets a non-string value from the IR.
+- `IR_GetGlobal` gets a global variable from the IR.
+- `IR_GetFunction` gets a function from the IR.
+- `IR_IsValueIndex` checks if the index is a valid non-string value index.
+- `IR_IsStringIndex` checks if the index is a valid string value index.
+
 ### JSON
 
 Available if `BASE_LAYER_INCLUDE_JSON` compiler macro is defined.
