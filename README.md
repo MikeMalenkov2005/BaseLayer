@@ -94,19 +94,8 @@ Available if `BASE_LAYER_INCLUDE_IR` compiler macro is defined.
 - `IRI_Op` creates the IRI structure from opcode and type.
 - `IR_Init` creates the IR structure for holding the program data. (NO ARENA)
 - `IR_Free` deallocates memory used by the IR structure.
-- `IR_GetValueClass` gets the class of a value from its index.
-- `IR_AddName` adds a global name to the IR.
-- `IR_GetName` gets the global name by index.
-- `IR_GetNameIndex` gets the index of an existing global name.
-- `IR_AddString` adds a global string value to the IR.
-- `IR_GetString` gets a global string value by index.
-- `IR_AddSingle` adds a global single value to the IR.
-- `IR_GetSingle` gets a global single value by index.
-- `IR_AddFunction` adds a function value to the IR.
-- `IR_GetFunction` gets a function value by index.
-- `IR_GetBlock` gets a code block by index.
-- `IR_AddGlobal` adds a global symbol to the IR.
-- `IR_GetGlobal` gets a global symbol from the IR.
+
+Other function will be documented later.
 
 ### JSON
 
