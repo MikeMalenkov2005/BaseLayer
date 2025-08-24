@@ -193,10 +193,12 @@ typedef struct IR
 IR IR_Init(MEM *mem);
 void IR_Free(IR *ir);
 
+U32 IR_AddName(IR *ir, STR name);
+
 U32 IR_AddString(IR *ir, STR string);
 U32 IR_AddValue(IR *ir, IR_Value value);
-U32 IR_AddGlobal(IR *ir, STR name, U32 value);
-U32 IR_AddFunction(IR *ir, STR name, U32 args, IRI_Block *body);
+U32 IR_AddGlobal(IR *ir, U32 name, U32 value);
+U32 IR_AddFunction(IR *ir, U32 name, U32 args, IRI_Block *body);
 
 STR IR_GetName(IR *ir, U32 index);
 U32 IR_GetNameIndex(IR *ir, STR name);

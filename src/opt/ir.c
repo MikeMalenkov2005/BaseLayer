@@ -19,6 +19,16 @@ void IR_Free(IR *ir)
   }
 }
 
+U32 IR_AddName(IR *ir, STR name)
+{
+  if (ir->names.size >= IR_INVALID_INDEX) return IR_INVALID_INDEX;
+  U32 index = 0;
+  while (index < (U32)ir->names.size && !STR_Equals(ir->names.data[index], name)) ++index;
+  if (index == (U32)ir->names.size) DS_VectorAppend(ir->mem, &ir->names, name);
+  if (index == (U32)ir->names.size) return IR_INVALID_INDEX;
+  return index;
+}
+
 U32 IR_AddString(IR *ir, STR string)
 {
   if (ir->strings.size >= IR_VALUE_INDEX_MASK) return IR_INVALID_INDEX;
@@ -39,41 +49,31 @@ U32 IR_AddValue(IR *ir, IR_Value value)
   return index;
 }
 
-U32 IR_AddGlobal(IR *ir, STR name, U32 value)
+U32 IR_AddGlobal(IR *ir, U32 name, U32 value)
 {
-  if (ir->globals.size >= IR_INVALID_INDEX || ir->names.size >= IR_INVALID_INDEX) return IR_INVALID_INDEX;
-  U32 index = IR_GetNameIndex(ir, name);
-  if (index != IR_INVALID_INDEX) return IR_INVALID_INDEX;
-  index = (U32)ir->names.size;
-  DS_VectorAppend(ir->mem, &ir->names, name);
-  if (index == (U32)ir->names.size) return IR_INVALID_INDEX;
-  IR_Global global = { index, value };
-  index = (U32)ir->globals.size;
+  if (ir->globals.size >= IR_INVALID_INDEX) return IR_INVALID_INDEX;
+  IR_Global global = { name, value };
+  U32 index = (U32)ir->globals.size;
   DS_VectorAppend(ir->mem, &ir->globals, global);
-  if (index == (U32)ir->globals.size) return (--ir->names.size, IR_INVALID_INDEX);
+  if (index == (U32)ir->globals.size) return IR_INVALID_INDEX;
   return index;
 }
 
-U32 IR_AddFunction(IR *ir, STR name, U32 args, IRI_Block *body)
+U32 IR_AddFunction(IR *ir, U32 name, U32 args, IRI_Block *body)
 {
-  if (ir->functions.size >= IR_INVALID_INDEX || ir->names.size >= IR_INVALID_INDEX) return IR_INVALID_INDEX;
-  U32 index = IR_GetNameIndex(ir, name);
-  if (index != IR_INVALID_INDEX) return IR_INVALID_INDEX;
-  index = (U32)ir->names.size;
-  DS_VectorAppend(ir->mem, &ir->names, name);
-  if (index == (U32)ir->names.size) return IR_INVALID_INDEX;
-  IR_Function function = { index, args, IR_INVALID_INDEX };
+  if (ir->functions.size >= IR_INVALID_INDEX) return IR_INVALID_INDEX;
+  IR_Function function = { name, args, IR_INVALID_INDEX };
   if (body)
   {
     if (ir->blocks.size >= IR_INVALID_INDEX) return IR_INVALID_INDEX;
-    index = (U32)ir->blocks.size;
+    U32 index = (U32)ir->blocks.size;
     DS_VectorAppend(ir->mem, &ir->blocks, *body);
     if (index == (U32)ir->blocks.size) return IR_INVALID_INDEX;
     function.body = index;
   }
-  index = (U32)ir->functions.size;
+  U32 index = (U32)ir->functions.size;
   DS_VectorAppend(ir->mem, &ir->functions, function);
-  if (index == (U32)ir->functions.size) return (--ir->names.size, IR_INVALID_INDEX);
+  if (index == (U32)ir->functions.size) return IR_INVALID_INDEX;
   return index;
 }
 
