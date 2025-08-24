@@ -114,8 +114,8 @@ U32 IR_AddGlobal(IR *ir, U32 name, U32 value)
   return index;
 }
 
-IR_Global IR_GetGlobal(IR *ir, U32 index)
+IR_Global *IR_GetGlobal(IR *ir, U32 index)
 {
-  return index < ir->globals.size ? ir->globals.data[index] : (IR_Global) { IR_INVALID_INDEX, IR_INVALID_INDEX };
+  return index < ir->globals.size ? &ir->globals.data[index] : nullptr;
 }
 

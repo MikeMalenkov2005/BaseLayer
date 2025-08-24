@@ -217,6 +217,6 @@ IR_Function IR_GetFunction(IR *ir, U32 index);
 IRI_Block IR_GetBlock(IR *ir, U32 index);
 
 U32 IR_AddGlobal(IR *ir, U32 name, U32 value);
-IR_Global IR_GetGlobal(IR *ir, U32 index);
+IR_Global *IR_GetGlobal(IR *ir, U32 index);
 
 #endif
