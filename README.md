@@ -94,18 +94,19 @@ Available if `BASE_LAYER_INCLUDE_IR` compiler macro is defined.
 - `IRI_Op` creates the IRI structure from opcode and type.
 - `IR_Init` creates the IR structure for holding the program data. (NO ARENA)
 - `IR_Free` deallocates memory used by the IR structure.
-- `IR_AddString` adds a string value to the IR.
-- `IR_AddValue` adds a non-string value to the IR.
-- `IR_AddGlobal` adds a global variable to the IR.
-- `IR_AddFunction` adds a function to the IR.
-- `IR_GetName` gets the name of an IR object by index in the names vector.
-- `IR_GetNameIndex` gets the index of the name in the names vector.
-- `IR_GetString` gets a string value from the IR.
-- `IR_GetValue` gets a non-string value from the IR.
-- `IR_GetGlobal` gets a global variable from the IR.
-- `IR_GetFunction` gets a function from the IR.
-- `IR_IsValueIndex` checks if the index is a valid non-string value index.
-- `IR_IsStringIndex` checks if the index is a valid string value index.
+- `IR_GetValueClass` gets the class of a value from its index.
+- `IR_AddName` adds a global name to the IR.
+- `IR_GetName` gets the global name by index.
+- `IR_GetNameIndex` gets the index of an existing global name.
+- `IR_AddString` adds a global string value to the IR.
+- `IR_GetString` gets a global string value by index.
+- `IR_AddSingle` adds a global single value to the IR.
+- `IR_GetSingle` gets a global single value by index.
+- `IR_AddFunction` adds a function value to the IR.
+- `IR_GetFunction` gets a function value by index.
+- `IR_GetBlock` gets a code block by index.
+- `IR_AddGlobal` adds a global symbol to the IR.
+- `IR_GetGlobal` gets a global symbol from the IR.
 
 ### JSON
 
