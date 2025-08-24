@@ -91,8 +91,7 @@ typedef enum IR_OpCode
   IR_IGEQ, /* GREATER OR EQUAL                            (VAL VAL -> BOOL)   */
 
   IR_AIDX, /* INDEX AN ADDRESS                            (PTR VAL -> PTR)    */
-  IR_CALA, /* CALL AN ADDRESS (DATA IS # OF ARGS)         (PTR -> CALL)       */
-  IR_CALG, /* CALL AN ADDRESS (DATA IS # OF ARGS)         ( -> CALL)          */
+  IR_CALL, /* CALL AN ADDRESS (DATA IS # OF ARGS)         (PTR -> CALL)       */
 
   IR_ASB,  /* CONVERT TO BOOLEAN                          (VAL -> BOOL)       */
   IR_ASF,  /* CONVERT TO 32-BIT FLOAT                     (VAL -> F32)        */
