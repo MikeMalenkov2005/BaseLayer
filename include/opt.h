@@ -2,7 +2,7 @@
 #include <opt/lex.h>
 #endif
 #ifdef BASE_LAYER_INCLUDE_IR
-#include <opt/ir.h>
+#error IR is not implemented
 #endif
 #ifdef BASE_LAYER_INCLUDE_JSON
 #error JSON is not implemented

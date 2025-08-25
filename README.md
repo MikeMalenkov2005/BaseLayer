@@ -90,12 +90,9 @@ Available if `BASE_LAYER_INCLUDE_LEXER` compiler macro is defined.
 
 Available if `BASE_LAYER_INCLUDE_IR` compiler macro is defined.
 
-- `IRI_Data` creates the IRI structure from data (U32).
-- `IRI_Op` creates the IRI structure from opcode and type.
-- `IR_Init` creates the IR structure for holding the program data. (NO ARENA)
-- `IR_Free` deallocates memory used by the IR structure.
+Removed because of not being universal.
 
-Other function will be documented later.
+TODO: Implement.
 
 ### JSON
 
