@@ -78,6 +78,26 @@ void MEM_DefaultDeallocate(PTR ignored, void *memory);
 
 #define MEM_From_MEM(mem) ((MEM) { (PTR)MEM_Allocate, (PTR)MEM_Reallocate, (PTR)MEM_Deallocate, (mem) })
 
+#define MEM_SMART_INCREMENT 16
+#define MEM_SMART_MAX_OWNED MEM_FastAlignDown(MAX_UZ / sizeof(UZ), MEM_SMART_INCREMENT)
+
+typedef struct MEM_Smart
+{
+  MEM *parent;
+  PTR *owned;
+  UZ capacity;
+} MEM_Smart;
+
+MEM_Smart MEM_SmartInit(MEM *parent);
+void MEM_SmartClear(MEM_Smart *smart);
+void MEM_SmartFree(MEM_Smart *smart);
+
+void *MEM_SmartAllocate(MEM_Smart *smart, UZ size);
+void *MEM_SmartReallocate(MEM_Smart *smart, void *memory, UZ size);
+void MEM_SmartDeallocate(MEM_Smart *smart, void *memory);
+
+#define MEM_FromSmart(smart) ((MEM) { (PTR)MEM_SmartAllocate, (PTR)MEM_SmartReallocate, (PTR)MEM_SmartDeallocate, (smart) })
+
 c_linkage_end
 
 #endif

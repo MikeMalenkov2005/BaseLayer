@@ -139,4 +139,71 @@ void MEM_DefaultDeallocate(PTR ignored, void *memory)
   free(memory);
 }
 
+MEM_Smart MEM_SmartInit(MEM *parent)
+{
+  MEM_Smart smart = { parent };
+  return smart;
+}
+
+void MEM_SmartClear(MEM_Smart *smart)
+{
+  for (UZ i = 0; i < smart->capacity; ++i)
+  {
+    if (smart->owned[i]) MEM_Deallocate(smart->parent, smart->owned[i]);
+  }
+}
+
+void MEM_SmartFree(MEM_Smart *smart)
+{
+  MEM_SmartClear(smart);
+  if (smart->owned) MEM_Deallocate(smart->parent, smart->owned);
+  MemoryZeroStruct(smart);
+}
+
+UZ MEM_SmartGetIndex(MEM_Smart *smart, PTR block)
+{
+  UZ index = 0;
+  while (index < smart->capacity && smart->owned[index] != block) ++index;
+  if (!block && index == smart->capacity && smart->capacity < MEM_SMART_MAX_OWNED)
+  {
+    UZ capacity = smart->capacity + MEM_SMART_INCREMENT;
+    PTR *owned = MEM_Reallocate(smart->parent, smart->owned, sizeof(PTR) * capacity);
+    if (owned)
+    {
+      smart->owned = owned;
+      smart->capacity = capacity;
+      MemoryZeroTyped((smart->owned + index), MEM_SMART_INCREMENT);
+    }
+  }
+  return index;
+}
+
+void *MEM_SmartAllocate(MEM_Smart *smart, UZ size)
+{
+  return MEM_SmartReallocate(smart, nullptr, size);
+}
+
+void *MEM_SmartReallocate(MEM_Smart *smart, void *memory, UZ size)
+{
+  UZ index = MEM_SmartGetIndex(smart, memory);
+  if (index >= smart->capacity) return nullptr;
+  memory = MEM_Reallocate(smart->parent, memory, size);
+  if (memory) smart->owned[index] = memory;
+  return memory;
+}
+
+void MEM_SmartDeallocate(MEM_Smart *smart, void *memory)
+{
+  if (memory)
+  {
+    UZ index = MEM_SmartGetIndex(smart, memory);
+    if (index < smart->capacity)
+    {
+      smart->owned[index] = nullptr;
+      MEM_Deallocate(smart->parent, memory);
+    }
+  }
+}
+
+
 #endif
