@@ -101,6 +101,56 @@ X_FOR_BASE_TYPES
 #undef X
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                 32-BIT VECTOR                                *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#define DS_Vector32(T) Glue(DS_Vector32_, T)
+
+#define DS_Vector32Define(T)  \
+typedef struct DS_Vector32(T) \
+{                             \
+  T *data;                    \
+  U32 size;                   \
+  U32 capacity;               \
+} DS_Vector32(T)
+
+#define DS_Vector32Init(T) ((DS_Vector32(T)) { null })
+
+#define DS_Vector32Resize(mem, vec, sz) Statement(                      \
+  void *__data = (vec)->data;                                           \
+  U32 __cap = (vec)->capacity;                                          \
+  __cap = MEM_FastAlignDown(__cap, 8);                                  \
+  while ((sz) > __cap) __cap += 8;                                      \
+  if (__cap > (vec)->capacity)                                          \
+  {                                                                     \
+    __data = MEM_Reallocate(mem, __data, __cap * sizeof(*(vec)->data)); \
+    if (!__data) break; /* TODO: hadnle errors later! */                \
+  }                                                                     \
+  (vec)->data = __data;                                                 \
+  (vec)->size = (sz);                                                   \
+  (vec)->capacity = __cap;                                              \
+)
+
+#define DS_Vector32Append(mem, vec, val) Statement(           \
+  U32 __size = (vec)->size + 1;                               \
+  DS_VectorResize(mem, vec, __size);                          \
+  if (__size == (vec)->size) (vec)->data[__size - 1] = (val); \
+)
+
+#define DS_Vector32Clear(mem, vec) Statement(         \
+  if ((vec)->data) MEM_Deallocate(mem, (vec)->data);  \
+  (vec)->data = nullptr;                              \
+  (vec)->size = 0;                                    \
+  (vec)->capacity = 0;                                \
+)
+
+#define DS_Vector32At(vec, i) (*((i) < (vec)->size ? &(vec)->data[i] : nullptr))
+
+#define X DS_Vector32Define
+X_FOR_BASE_TYPES
+#undef X
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 LINKED LIST                                  *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
