@@ -19,8 +19,10 @@ void  OS_MemoryDecommit(void* memory, UZ size);
 void  OS_MemoryRelease(void* memory, UZ size);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*                                    INFO                                      *
+*                                   GENERAL                                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void OS_Exit(int code);
 
 STR OS_GetExecutablePath(MEM *mem);
 

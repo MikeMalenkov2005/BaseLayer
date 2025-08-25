@@ -31,6 +31,11 @@ void  OS_MemoryRelease(void* memory, UZ size)
   munmap(memory, size);
 }
 
+void OS_Exit(int code)
+{
+  _exit(code);
+}
+
 OS_File OS_FileOpen(STR path, U32 flags)
 {
   int oflags = 0;

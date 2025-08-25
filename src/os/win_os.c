@@ -26,6 +26,11 @@ void  OS_MemoryRelease(void* memory, UZ size)
   VirtualFree(memory, 0, MEM_RELEASE);
 }
 
+void OS_Exit(int code)
+{
+  ExitProcess((UINT)code);
+}
+
 STR OS_GetExecutablePath(MEM *mem)
 {
   STR result = { 0 };
