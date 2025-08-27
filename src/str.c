@@ -288,13 +288,13 @@ S32 UTF16_DecodeFirst(STR16 string)
 {
   U32 codepoint = -1;
   U16 high = string.str[0];
-  switch (high & 0xDC00)
+  switch (high & 0xFC00)
   {
   case 0xD800:
     if (string.size > 1)
     {
       U16 low = string.str[1];
-      if ((low & 0xDC00) == 0xDC00)
+      if ((low & 0xFC00) == 0xDC00)
       {
         U32 offset = (low & 0x3FF) | ((high & 0x3FF) << 10);
         codepoint = 0x10000 + offset;
@@ -316,7 +316,7 @@ UZ UTF16_Encode(U16 *buffer, UZ capacity, S32 codepoint)
   {
     if (codepoint < 0x10000)
     {
-      if (capacity > 0 && (codepoint & 0xD800) != 0xD800)
+      if (capacity > 0 && (codepoint & 0xF800) != 0xD800)
       {
         buffer[0] = codepoint;
         size = 1;
