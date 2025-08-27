@@ -326,8 +326,9 @@ UZ UTF16_Encode(U16 *buffer, UZ capacity, S32 codepoint)
     {
       if (capacity > 1)
       {
-        buffer[0] = 0xD800 | (codepoint >> 10);
-        buffer[1] = 0xDC00 | (codepoint & 0x3FF);
+        U32 offset = codepoint - 0x10000;
+        buffer[0] = 0xD800 | (offset >> 10);
+        buffer[1] = 0xDC00 | (offset & 0x3FF);
         size = 2;
       }
     }
