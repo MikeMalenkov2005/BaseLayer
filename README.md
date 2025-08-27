@@ -40,8 +40,9 @@ This is my base layer for C programming.
 - `OS_MemoryDecommit` decommits physical memory.
 - `OS_MemoryRelease` releases reserved address space.
 
-### Info
+### General
 
+- `OS_Exit` exits the current process without calling 'atexit' functions.
 - `OS_GetExecutablePath` returnes a path to the current executable.
 
 ### Dynamic Linking
