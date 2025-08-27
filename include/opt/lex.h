@@ -47,7 +47,13 @@ LEX_Token LEX_NextToken(LEX *lex);
 
 typedef U16 LEX_DefaultKeyWordCallback(STR word);
 
+typedef struct LEX_DefaultStringSettings
+{
+  U16 token;
+  U8 escape;
+} LEX_DefaultStringSettings;
+
 U16 LEX_DefaultKeyWordRule(LEX *lex, LEX_DefaultKeyWordCallback *callback);
-U16 LEX_DefaultStringRule(LEX *lex, UP escape);
+U16 LEX_DefaultStringRule(LEX *lex, LEX_DefaultStringSettings *settings);
 
 #endif

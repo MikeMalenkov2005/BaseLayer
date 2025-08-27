@@ -93,16 +93,16 @@ U16 LEX_DefaultKeyWordRule(LEX *lex, LEX_DefaultKeyWordCallback *callback)
   return callback(word);
 }
 
-U16 LEX_DefaultStringRule(LEX *lex, UP escape)
+U16 LEX_DefaultStringRule(LEX *lex, LEX_DefaultStringSettings *settings)
 {
   U8 end = LEX_CurrentByte(lex);
   bool skip = true;
   for (U8 byte = end; byte && (skip || byte != end); byte = LEX_CurrentByte(lex))
   {
-    skip = (byte == (U8)escape);
+    skip = (byte == settings->escape);
     LEX_Increment(lex);
   }
   LEX_Increment(lex);
-  return end;
+  return settings->token;
 }
 
