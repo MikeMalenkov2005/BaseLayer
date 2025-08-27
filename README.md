@@ -98,7 +98,29 @@ TODO: Implement.
 
 Available if `BASE_LAYER_INCLUDE_JSON` compiler macro is defined.
 
-TODO: Implement.
+- `JSON_Init` creates a JSON reader/writer with a given string buffer.
+- `JSON_ReadStringValue` reads a JSON string value.
+- `JSON_ReadNumberValue` reads a JSON number value.
+- `JSON_ReadBooleanValue` reads a JSON boolean value.
+- `JSON_ReadNullValue` reads a JSON null value.
+- `JSON_ReadArrayBegin` starts reading a JSON array.
+- `JSON_ReadArrayEnd` stops reading a JSON array.
+- `JSON_ReadArray` is a macro for reading JSON array and it's contents.
+- `JSON_ReadObjectBegin` starts reading a JSON object.
+- `JSON_ReadObjectEnd` stops reading a JSON object.
+- `JSON_ReadObject` is a macro for reading JSON object and it's contents.
+- `JSON_ReadObjectKey` reads a JSON object key.
+- `JSON_WriteStringValue` writes a JSON string value.
+- `JSON_WriteNumberValue` writes a JSON number value.
+- `JSON_WriteBooleanValue` writes a JSON boolean value.
+- `JSON_WriteNullValue` writes a JSON null value.
+- `JSON_WriteArrayBegin` starts writing a JSON array.
+- `JSON_WriteArrayEnd` ends writing a JSON array.
+- `JSON_WriteArray` is a macro for writing a JSON array and it's contents.
+- `JSON_WriteObjectBegin` starts writing a JSON object.
+- `JSON_WriteObjectEnd` stops writing a JSON object.
+- `JSON_WriteObject` is a macro for writing a JSON object and it's contents.
+- `JSON_WriteObjectKey` writes a JSON object key.
 
 ### REX (Regular Expressions)
 

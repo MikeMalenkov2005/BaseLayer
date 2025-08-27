@@ -5,7 +5,7 @@
 #error IR is not implemented
 #endif
 #ifdef BASE_LAYER_INCLUDE_JSON
-#error JSON is not implemented
+#include "opt/json.c"
 #endif
 #ifdef BASE_LAYER_INCLUDE_REX
 #error REX is not implemented
