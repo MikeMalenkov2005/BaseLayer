@@ -45,6 +45,21 @@ This is my base layer for C programming.
 - `OS_Exit` exits the current process without calling 'atexit' functions.
 - `OS_GetExecutablePath` returnes a path to the current executable.
 
+### File API
+
+- `OS_FileOpen` opens a file with given path, flags and access mode.
+- `OS_FileClose` closes an opened file.
+- `OS_FileTell` gets the current position in an opened file.
+- `OS_FileSeek` moves the current position in an opened file.
+- `OS_FileSize` gets the size of an opened file.
+- `OS_FileRead` reads data into a STR buffer from an opened file.
+- `OS_FileWrite` writes a STR to an opened file.
+- `OS_FileExists` checks if there is a file with a given path.
+- `OS_FileRename` changes the path to a file.
+- `OS_FileDelete` deletes a file with a given path.
+- `OS_FileCreateDir` creates a directory with a given path.
+- `OS_FileDeleteDir` deletes a directory with a given path.
+
 ### Dynamic Linking
 
 - `OS_LibraryLoad` loads a dynamic library and returnes a handle to it.
@@ -55,6 +70,16 @@ This is my base layer for C programming.
 
 - `OS_ThreadCreate` creates a thread with and starts it at a given function.
 - `OS_ThreadJoin` waits for the thread to exit and returnes the exit code.
+- `OS_ThreadExit` exits the current thread with a given exit code.
+- `OS_ThreadYield` yields the processor and switches to the next thread.
+- `OS_ThreadKeyInit` creates a TLS key.
+- `OS_ThreadKeyFree` deletes a TLS key.
+- `OS_ThreadKeyGet` gets a value from the TLS.
+- `OS_ThreadKeySet` sets a value in the TLS.
+- `OS_MutexInit` creates a mutex.
+- `OS_MutexFree` deletes a mutex.
+- `OS_MutexLock` locks a mutex.
+- `OS_MutexUnlock` unlocks a mutex.
 
 ### Networking
 
