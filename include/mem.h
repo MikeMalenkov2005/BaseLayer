@@ -70,7 +70,7 @@ void *MEM_DefaultAllocate(PTR ignored, UZ size);
 void *MEM_DefaultReallocate(PTR ignored, void *memory, UZ size);
 void MEM_DefaultDeallocate(PTR ignored, void *memory);
 
-#define MEM_Default() ((MEM) { (PTR)MEM_DefaultAllocate, (PTR)MEM_DefaultReallocate, (PTR)MEM_DefaultDeallocate })
+#define MEM_Default() ((MEM) { (PTR)MEM_DefaultAllocate, (PTR)MEM_DefaultReallocate, (PTR)MEM_DefaultDeallocate, nullptr })
 
 #endif
 

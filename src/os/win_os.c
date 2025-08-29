@@ -23,6 +23,7 @@ void  OS_MemoryDecommit(void* memory, UZ size)
 
 void  OS_MemoryRelease(void* memory, UZ size)
 {
+  (void)size;
   VirtualFree(memory, 0, MEM_RELEASE);
 }
 
@@ -76,7 +77,7 @@ void OS_FileClose(OS_File file)
 U64 OS_FileTell(OS_File file)
 {
   U32 high = 0;
-  U32 low = SetFilePointer((HANDLE)(file - 1), 0, &high, FILE_CURRENT);
+  U32 low = SetFilePointer((HANDLE)(file - 1), 0, (PTR)&high, FILE_CURRENT);
   if (low == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR) return MAX_U64;
   return (((U64)high << 32) | low);
 }
@@ -84,14 +85,14 @@ U64 OS_FileTell(OS_File file)
 U64 OS_FileSeek(OS_File file, S64 offset, OS_FileSeekMode mode)
 {
   U32 high = (U32)(offset >> 32);
-  U32 low = SetFilePointer((HANDLE)(file - 1), (S32)offset, &high, mode);
+  U32 low = SetFilePointer((HANDLE)(file - 1), (S32)offset, (PTR)&high, mode);
   return (((U64)high << 32) | low);
 }
 
 U64 OS_FileSize(OS_File file)
 {
   U32 high = 0;
-  U32 low = GetFileSize((HANDLE)(file - 1), &high);
+  U32 low = GetFileSize((HANDLE)(file - 1), (PTR)&high);
   if (low == INVALID_FILE_SIZE && GetLastError() != NO_ERROR) return ~(U64)0;
   return (((U64)high << 32) | low);
 }
@@ -105,7 +106,7 @@ UZ OS_FileRead(OS_File file, STR buffer)
     U32 toread = (U32)remain;
     if (remain > MAX_U32) toread = MAX_U32;
     U32 count = 0;
-    if (!ReadFile((HANDLE)(file - 1), buffer.str + bytes, toread, &count, nullptr)) return 0;
+    if (!ReadFile((HANDLE)(file - 1), buffer.str + bytes, toread, (PTR)&count, nullptr)) return 0;
     bytes += count;
     if (count < toread) break;
   }
@@ -121,7 +122,7 @@ UZ OS_FileWrite(OS_File file, STR data)
     U32 towrite = (U32)remain;
     if (remain > MAX_U32) towrite = MAX_U32;
     U32 count = 0;
-    if (!WriteFile((HANDLE)(file - 1), data.str + result, towrite, &count, nullptr)) break;
+    if (!WriteFile((HANDLE)(file - 1), data.str + result, towrite, (PTR)&count, nullptr)) break;
     result += count;
     if (count < towrite) break;
   }
@@ -201,12 +202,12 @@ void OS_LibraryFree(OS_Library lib)
 
 OS_Thread OS_ThreadCreate(OS_ThreadFunc *start, void *param)
 {
-  return (OS_Thread)CreateThread(nullptr, 0, start, param, 0, nullptr);
+  return (OS_Thread)CreateThread(nullptr, 0, (PTR)start, param, 0, nullptr);
 }
 
 bool OS_ThreadJoin(OS_Thread thread, U32 *result)
 {
-  return !WaitForSingleObject((HANDLE)thread, INFINITE) && GetExitCodeThread((HANDLE)thread, result);
+  return !WaitForSingleObject((HANDLE)thread, INFINITE) && GetExitCodeThread((HANDLE)thread, (PTR)result);
 }
 
 void OS_ThreadExit(U32 code)
@@ -334,7 +335,7 @@ OS_NetSocket OS_NetOpenServer(OS_NetAddress *address, int backlog)
         .sin_port = htons(address->port),
       };
       MemoryCopy(&addr.sin_addr, address->ipv4.addr, sizeof(address->ipv4.addr));
-      if (bind(sock, &addr, sizeof(addr))) return (closesocket(sock), null);
+      if (bind(sock, (PTR)&addr, sizeof(addr))) return (closesocket(sock), null);
     }
     else return null;
     break;
@@ -348,7 +349,7 @@ OS_NetSocket OS_NetOpenServer(OS_NetAddress *address, int backlog)
         .sin6_scope_id = address->ipv6.scope,
       };
       MemoryCopy(&addr.sin6_addr, address->ipv6.addr, sizeof(address->ipv6.addr));
-      if (bind(sock, &addr, sizeof(addr))) return (closesocket(sock), null);
+      if (bind(sock, (PTR)&addr, sizeof(addr))) return (closesocket(sock), null);
     }
     else return null;
     break;
@@ -371,7 +372,7 @@ OS_NetSocket OS_NetConnect(OS_NetAddress *address)
         .sin_port = htons(address->port),
       };
       MemoryCopy(&addr.sin_addr, address->ipv4.addr, sizeof(address->ipv4.addr));
-      if (connect(sock, &addr, sizeof(addr))) return (closesocket(sock), null);
+      if (connect(sock, (PTR)&addr, sizeof(addr))) return (closesocket(sock), null);
     }
     else return null;
     break;
@@ -385,7 +386,7 @@ OS_NetSocket OS_NetConnect(OS_NetAddress *address)
         .sin6_scope_id = address->ipv6.scope,
       };
       MemoryCopy(&addr.sin6_addr, address->ipv6.addr, sizeof(address->ipv6.addr));
-      if (connect(sock, &addr, sizeof(addr))) return (closesocket(sock), null);
+      if (connect(sock, (PTR)&addr, sizeof(addr))) return (closesocket(sock), null);
     }
     else return null;
     break;
@@ -415,7 +416,7 @@ SZ OS_NetSendTo(OS_NetSocket socket, const void *data, UZ size, OS_NetAddress *a
         .sin_port = htons(address->port),
       };
       MemoryCopy(&addr.sin_addr, address->ipv4.addr, sizeof(address->ipv4.addr));
-      return (SZ)sendto((SOCKET)(socket - 1), data, (int)size, 0, &addr, sizeof(addr));
+      return (SZ)sendto((SOCKET)(socket - 1), data, (int)size, 0, (PTR)&addr, sizeof(addr));
     }
     break;
   case OS_NET_TYPE_IPv6:
@@ -427,7 +428,7 @@ SZ OS_NetSendTo(OS_NetSocket socket, const void *data, UZ size, OS_NetAddress *a
         .sin6_scope_id = address->ipv6.scope,
       };
       MemoryCopy(&addr.sin6_addr, address->ipv6.addr, sizeof(address->ipv6.addr));
-      return (SZ)sendto((SOCKET)(socket - 1), data, (int)size, 0, &addr, sizeof(addr));
+      return (SZ)sendto((SOCKET)(socket - 1), data, (int)size, 0, (PTR)&addr, sizeof(addr));
     }
     break;
   }
@@ -443,7 +444,7 @@ SZ OS_NetReceiveFrom(OS_NetSocket socket, void *buffer, UZ size, OS_NetAddress *
 {
   U8 addr[64] = { 0 };
   UZ addrlen = sizeof(addr);
-  SZ result = (SZ)recvfrom((SOCKET)(socket - 1), buffer, (int)size, 0, addr, &addrlen);
+  SZ result = (SZ)recvfrom((SOCKET)(socket - 1), buffer, (int)size, 0, (PTR)addr, &addrlen);
   switch (((struct sockaddr*)addr)->sa_family)
   {
   case AF_INET:

@@ -126,16 +126,19 @@ void *MEM_AllocateZero(MEM *mem, UZ size)
 
 void *MEM_DefaultAllocate(PTR ignored, UZ size)
 {
+  (void)ignored;
   return malloc(size);
 }
 
 void *MEM_DefaultReallocate(PTR ignored, void *memory, UZ size)
 {
+  (void)ignored;
   return realloc(memory, size);
 }
 
 void MEM_DefaultDeallocate(PTR ignored, void *memory)
 {
+  (void)ignored;
   free(memory);
 }
 

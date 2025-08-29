@@ -213,7 +213,7 @@ S32 UTF8_DecodeFirst(STR string)
       codepoint = byte & UTF8_FirstMask[size];
       for (U8 i = 1; i < size; ++i)
       {
-        if (string.str[i] & 0xC0 != 0x80) return -1;
+        if ((string.str[i] & 0xC0) != 0x80) return -1;
         codepoint = (codepoint << 6) | (string.str[i] & 0x3F);
       }
     }

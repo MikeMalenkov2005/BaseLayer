@@ -290,7 +290,7 @@ OS_NetSocket OS_NetOpenServer(OS_NetAddress *address, int backlog)
         .sin_port = htons(address->port),
       };
       MemoryCopy(&addr.sin_addr, address->ipv4.addr, sizeof(address->ipv4.addr));
-      if (bind(sock, &addr, sizeof(addr))) return (close(sock), null);
+      if (bind(sock, (PTR)&addr, sizeof(addr))) return (close(sock), null);
     }
     else return null;
     break;
@@ -304,7 +304,7 @@ OS_NetSocket OS_NetOpenServer(OS_NetAddress *address, int backlog)
         .sin6_scope_id = address->ipv6.scope,
       };
       MemoryCopy(&addr.sin6_addr, address->ipv6.addr, sizeof(address->ipv6.addr));
-      if (bind(sock, &addr, sizeof(addr))) return (close(sock), null);
+      if (bind(sock, (PTR)&addr, sizeof(addr))) return (close(sock), null);
     }
     else return null;
     break;
@@ -327,7 +327,7 @@ OS_NetSocket OS_NetConnect(OS_NetAddress *address)
         .sin_port = htons(address->port),
       };
       MemoryCopy(&addr.sin_addr, address->ipv4.addr, sizeof(address->ipv4.addr));
-      if (connect(sock, &addr, sizeof(addr))) return (close(sock), null);
+      if (connect(sock, (PTR)&addr, sizeof(addr))) return (close(sock), null);
     }
     else return null;
     break;
@@ -341,7 +341,7 @@ OS_NetSocket OS_NetConnect(OS_NetAddress *address)
         .sin6_scope_id = address->ipv6.scope,
       };
       MemoryCopy(&addr.sin6_addr, address->ipv6.addr, sizeof(address->ipv6.addr));
-      if (connect(sock, &addr, sizeof(addr))) return (close(sock), null);
+      if (connect(sock, (PTR)&addr, sizeof(addr))) return (close(sock), null);
     }
     else return null;
     break;
@@ -371,7 +371,7 @@ SZ OS_NetSendTo(OS_NetSocket socket, const void *data, UZ size, OS_NetAddress *a
         .sin_port = htons(address->port),
       };
       MemoryCopy(&addr.sin_addr, address->ipv4.addr, sizeof(address->ipv4.addr));
-      return (SZ)sendto((int)(socket - 1), data, (size_t)size, 0, &addr, sizeof(addr));
+      return (SZ)sendto((int)(socket - 1), data, (size_t)size, 0, (PTR)&addr, sizeof(addr));
     }
     break;
   case OS_NET_TYPE_IPv6:
@@ -383,7 +383,7 @@ SZ OS_NetSendTo(OS_NetSocket socket, const void *data, UZ size, OS_NetAddress *a
         .sin6_scope_id = address->ipv6.scope,
       };
       MemoryCopy(&addr.sin6_addr, address->ipv6.addr, sizeof(address->ipv6.addr));
-      return (SZ)sendto((int)(socket - 1), data, (size_t)size, 0, &addr, sizeof(addr));
+      return (SZ)sendto((int)(socket - 1), data, (size_t)size, 0, (PTR)&addr, sizeof(addr));
     }
     break;
   }
@@ -399,7 +399,7 @@ SZ OS_NetReceiveFrom(OS_NetSocket socket, void *buffer, UZ size, OS_NetAddress *
 {
   U8 addr[64] = { 0 };
   UZ addrlen = sizeof(addr);
-  SZ result = (SZ)recvfrom((int)(socket - 1), buffer, (size_t)size, 0, addr, sizeof(addr), &addrlen);
+  SZ result = (SZ)recvfrom((int)(socket - 1), buffer, (size_t)size, 0, (PTR)addr, sizeof(addr), &addrlen);
   switch (((struct sockaddr*)addr)->sa_family)
   {
   case AF_INET:
