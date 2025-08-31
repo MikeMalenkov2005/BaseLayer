@@ -1,15 +1,19 @@
 #include <os.h>
 
+#include <sys/types.h>
+#include <fcntl.h>
 #include <sys/mman.h>
 #include <dlfcn.h>
 #include <pthread.h>
 #include <sched.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #include <sys/stat.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 void* OS_MemoryReserve(UZ size)
 {
@@ -52,8 +56,8 @@ OS_File OS_FileOpen(STR path, U32 flags)
     break;
   }
   if (flags & OS_FILE_OPEN_CREATE) oflags |= O_CREAT;
-  if ((flags & OS_FILE_OPEN_TRUNCATE) && (flags & OS_FILE_OPEN_WRITE)) oflags |= O_TRUNK;
-  int file = open(path.str, oflags, 0666);
+  if ((flags & OS_FILE_OPEN_TRUNCATE) && (flags & OS_FILE_OPEN_WRITE)) oflags |= O_TRUNC;
+  int file = open((char*)path.str, oflags, 0666);
   return (file < 0 ? null : ((OS_File)file + 1));
 }
 
@@ -106,32 +110,32 @@ UZ OS_FileWrite(OS_File file, STR data)
 
 bool OS_FileExists(STR path)
 {
-  return (access(path.str, F_OK) == 0);
+  return (access((char*)path.str, F_OK) == 0);
 }
 
 bool OS_FileRename(STR src, STR dst)
 {
-  return (rename(src.str, dst.str) == 0);
+  return (rename((char*)src.str, (char*)dst.str) == 0);
 }
 
 bool OS_FileDelete(STR path)
 {
-  return (remove(path.str) != -1);
+  return (remove((char*)path.str) != -1);
 }
 
 bool OS_FileCreateDir(STR path)
 {
-  return (mkdir(path.str, 0777) != -1)
+  return (mkdir((char*)path.str, 0777) != -1);
 }
 
 bool OS_FileDeleteDir(STR path)
 {
-  return (rmdir(path.str) != -1)
+  return (rmdir((char*)path.str) != -1);
 }
 
 OS_Library OS_LibraryLoad(STR path)
 {
-  return (OS_Library)dlopen(path.str, RTLD_LAZY);
+  return (OS_Library)dlopen((char*)path.str, RTLD_LAZY);
 }
 
 OS_LibraryFunc *OS_LibraryGetFunction(OS_Library lib, const char *name)
@@ -155,13 +159,13 @@ bool OS_ThreadJoin(OS_Thread thread, U32 *result)
 {
   void *value;
   if (pthread_join((pthread_t)(thread - 1), &value)) return false;
-  *result = (U32)value;
+  *result = (U32)(UP)value;
   return true;
 }
 
 void OS_ThreadExit(U32 code)
 {
-  pthread_exit((void*)code);
+  pthread_exit((void*)(UP)code);
 }
 
 bool OS_ThreadYield()
@@ -206,7 +210,7 @@ bool OS_MutexFree(OS_Mutex mutex)
 {
   if (pthread_mutex_destroy((pthread_mutex_t *)mutex))
   {
-    free((void*)mutex)
+    free((void*)mutex);
     return true;
   }
   return false;
@@ -399,7 +403,7 @@ SZ OS_NetReceiveFrom(OS_NetSocket socket, void *buffer, UZ size, OS_NetAddress *
 {
   U8 addr[64] = { 0 };
   UZ addrlen = sizeof(addr);
-  SZ result = (SZ)recvfrom((int)(socket - 1), buffer, (size_t)size, 0, (PTR)addr, sizeof(addr), &addrlen);
+  SZ result = (SZ)recvfrom((int)(socket - 1), buffer, (size_t)size, 0, (PTR)addr, &addrlen);
   switch (((struct sockaddr*)addr)->sa_family)
   {
   case AF_INET:

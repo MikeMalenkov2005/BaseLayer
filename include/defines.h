@@ -83,6 +83,7 @@
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <stdint.h>
+#include <stddef.h>
 
 /* Integer Types */
 typedef int8_t    S8;

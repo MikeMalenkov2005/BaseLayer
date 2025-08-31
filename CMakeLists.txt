@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(BaseLayer C)
 
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_EXTENSIONS ON)
 
 if (TARGET ${PROJECT_NAME})
   message(WARNING "${PROJECT_NAME} is included twice!")
