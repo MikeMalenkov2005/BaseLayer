@@ -444,7 +444,7 @@ SZ OS_NetReceiveFrom(OS_NetSocket socket, void *buffer, UZ size, OS_NetAddress *
 {
   U8 addr[64] = { 0 };
   UZ addrlen = sizeof(addr);
-  SZ result = (SZ)recvfrom((SOCKET)(socket - 1), buffer, (int)size, 0, (PTR)addr, &addrlen);
+  SZ result = (SZ)recvfrom((SOCKET)(socket - 1), buffer, (int)size, 0, (PTR)addr, (void*)&addrlen);
   switch (((struct sockaddr*)addr)->sa_family)
   {
   case AF_INET:
