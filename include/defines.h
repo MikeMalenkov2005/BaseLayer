@@ -68,6 +68,8 @@
 #   define ARCH_X64
 # elif defined(_M_IX86)
 #   define ARCH_X86
+# elif defined(_M_ARM64)
+#   define ARCH_ARM64
 # elif defined(_M_ARM)
 #   define ARCH_ARM
 # else
