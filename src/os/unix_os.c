@@ -159,7 +159,7 @@ bool OS_ThreadJoin(OS_Thread thread, U32 *result)
 {
   void *value;
   if (pthread_join((pthread_t)(thread - 1), &value)) return false;
-  *result = (U32)(UP)value;
+  if (result) *result = (U32)(UP)value;
   return true;
 }
 
@@ -348,6 +348,29 @@ OS_NetSocket OS_NetConnect(OS_NetAddress *address)
       if (connect(sock, (PTR)&addr, sizeof(addr))) return (close(sock), null);
     }
     else return null;
+    break;
+  }
+  return (OS_NetSocket)sock + 1;
+}
+
+OS_NetSocket OS_NetAccept(OS_NetSocket server, OS_NetAddress *address)
+{
+  U8 addr[64] = { 0 };
+  UZ addrlen = sizeof(addr);
+  int sock = accept((int)(server - 1), (struct sockaddr*)addr, &addrlen);
+  switch (((struct sockaddr*)addr)->sa_family)
+  {
+  case AF_INET:
+    address->type = OS_NET_TYPE_IPv4;
+    address->port = ntohs(((struct sockaddr_in*)addr)->sin_port);
+    MemoryCopy(address->ipv4.addr, &((struct sockaddr_in*)addr)->sin_addr, sizeof(address->ipv4.addr));
+    break;
+  case AF_INET6:
+    address->type = OS_NET_TYPE_IPv6;
+    address->port = ntohs(((struct sockaddr_in6*)addr)->sin6_port);
+    address->ipv6.flow = ((struct sockaddr_in6*)addr)->sin6_flowinfo;
+    address->ipv6.scope = ((struct sockaddr_in6*)addr)->sin6_scope_id;
+    MemoryCopy(address->ipv6.addr, &((struct sockaddr_in6*)addr)->sin6_addr, sizeof(address->ipv6.addr));
     break;
   }
   return (OS_NetSocket)sock + 1;

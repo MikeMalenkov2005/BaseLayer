@@ -149,6 +149,7 @@ typedef UP OS_NetSocket;
 OS_NetSocket OS_NetOpenDatagramSocket(OS_NetType type);
 OS_NetSocket OS_NetOpenServer(OS_NetAddress *address, int backlog);
 OS_NetSocket OS_NetConnect(OS_NetAddress *address);
+OS_NetSocket OS_NetAccept(OS_NetSocket server, OS_NetAddress *address);
 
 void OS_NetClose(OS_NetSocket socket);
 
