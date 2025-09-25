@@ -99,6 +99,149 @@ void MEM_ArenaLevelFree(MEM_ArenaLevel level)
   MEM_ArenaDeallocateTo(level.arena, level.position);
 }
 
+typedef struct MEM_HeapBlock
+{
+  struct MEM_HeapBlock *next;
+  struct MEM_HeapBlock *prev;
+  UZ size;
+  UZ free;
+} MEM_HeapBlock;
+
+static MEM_HeapBlock *MEM_HeapFindFirstFreeBlock(MEM_Heap *heap, UZ size)
+{
+  MEM_HeapBlock *block = heap->commited ? (PTR)heap->memory : nullptr;
+  while (block && block->size < size && !block->free) block = block->next;
+  return block;
+}
+
+static void MEM_HeapDefragment(MEM_Heap *heap, MEM_HeapBlock *block)
+{
+  if (block->free)
+  {
+    while (block != (PTR)heap->memory && block->prev->free) block = block->prev;
+    while (block->next && block->next->free)
+    {
+      block->size += block->next->size + sizeof *block;
+      block->next = block->next->next;
+      if (!block->next) block->prev = block;
+      else block->next->prev = block;
+    }
+  }
+}
+
+MEM_Heap MEM_HeapInit(UZ size)
+{
+  MEM_Heap heap;
+  heap.size = size  ? MEM_FastAlignUp(size, MEM_HEAP_ALIGNMENT)
+                    : (UZ)MEM_HEAP_DEFAULT_SIZE;
+  heap.memory = OS_MemoryReserve(heap.size);
+  heap.commited = 0;
+  return heap;
+}
+
+void MEM_HeapClear(MEM_Heap *heap)
+{
+  if (heap && heap->memory && heap->commited)
+  {
+    ((MEM_HeapBlock*)heap->memory)->next = nullptr;
+    ((MEM_HeapBlock*)heap->memory)->prev = (PTR)heap->memory;
+    ((MEM_HeapBlock*)heap->memory)->size = heap->commited;
+    ((MEM_HeapBlock*)heap->memory)->free = true;
+  }
+}
+
+void MEM_HeapFree(MEM_Heap *heap)
+{
+  OS_MemoryRelease(heap->memory, heap->size);
+  MemoryZeroStruct(heap);
+}
+
+void *MEM_HeapAllocate(MEM_Heap *heap, UZ size)
+{
+  MEM_HeapBlock *block;
+  if (!heap || !heap->memory) return nullptr;
+  if (!(size = MEM_FastAlignUp(size, MEM_HEAP_ALIGNMENT))) return nullptr;
+  if (!(block = MEM_HeapFindFirstFreeBlock(heap, size)))
+  {
+    if (heap->commited && ((MEM_HeapBlock*)heap->memory)->prev->free)
+    {
+      block = ((MEM_HeapBlock*)heap->memory)->prev;
+      UZ commit = MEM_FastAlignUp(size - block->size, (UZ)MEM_HEAP_COMMIT_SIZE);
+      commit = Min(commit, heap->size - heap->commited);
+      if (commit < size - block->size) return nullptr;
+      OS_MemoryCommit(heap->memory + heap->commited, commit);
+      heap->commited += commit;
+      block->size += commit;
+    }
+    else
+    {
+      block = (PTR)(heap->memory + heap->commited);
+      UZ commit = MEM_FastAlignUp(size, (UZ)MEM_HEAP_COMMIT_SIZE);
+      commit = Min(commit, heap->size - heap->commited);
+      if (commit < size) return nullptr;
+      OS_MemoryCommit(heap->memory + heap->commited, commit);
+      if (heap->commited)
+      {
+        block->prev = ((MEM_HeapBlock*)heap->memory)->prev;
+        block->prev->next = ((MEM_HeapBlock*)heap->memory)->prev = block;
+      }
+      else block->prev = block;
+      heap->commited += commit;
+      block->next = nullptr;
+      block->size = commit;
+      block->free = true;
+    }
+  }
+  if (block->size > size + sizeof *block)
+  {
+    MEM_HeapBlock *second = (PTR)((U8*)(block + 1) + size);
+    second->prev = block;
+    second->next = block->next;
+    second->size = block->size - size - sizeof *block;
+    second->free = true;
+    block->next = second;
+    block->size = size;
+    if (block == (PTR)heap->memory) block->prev = second;
+  }
+  block->free = false;
+  return block + 1;
+}
+
+void *MEM_HeapReallocate(MEM_Heap *heap, void *memory, UZ size)
+{
+  if (!(size = MEM_FastAlignUp(size, MEM_HEAP_ALIGNMENT))) return nullptr;
+  if (!memory) return MEM_HeapAllocate(heap, size);
+
+  if (heap && heap->memory && (UP)memory - (UP)heap->memory < heap->commited)
+  {
+    MEM_HeapBlock *block = (MEM_HeapBlock*)memory - 1;
+    if (memory && !((UP)memory & (MEM_HEAP_ALIGNMENT - 1)) && block->size && !(block->size & (MEM_HEAP_ALIGNMENT - 1)) && !block->free)
+    {
+      if ((memory = MEM_HeapAllocate(heap, size)))
+      {
+        block->free = true;
+        memory = MemoryCopy(memory, block + 1, size);
+        MEM_HeapDefragment(heap, block);
+        return memory;
+      }
+    }
+  }
+  return nullptr;
+}
+
+void MEM_HeapDeallocate(MEM_Heap *heap, void *memory)
+{
+  if (heap && heap->memory && (UP)memory - (UP)heap->memory < heap->commited)
+  {
+    MEM_HeapBlock *block = (MEM_HeapBlock*)memory - 1;
+    if (memory && !((UP)memory & (MEM_HEAP_ALIGNMENT - 1)) && block->size && !(block->size & (MEM_HEAP_ALIGNMENT - 1)) && !block->free)
+    {
+      block->free = true;
+      MEM_HeapDefragment(heap, block);
+    }
+  }
+}
+
 void *MEM_Allocate(MEM *mem, UZ size)
 {
   return mem->allocate(mem->data, size);
@@ -142,9 +285,11 @@ void MEM_DefaultDeallocate(PTR ignored, void *memory)
   free(memory);
 }
 
+#endif
+
 MEM_Smart MEM_SmartInit(MEM *parent)
 {
-  MEM_Smart smart = { parent };
+  MEM_Smart smart = { parent, nullptr, 0 };
   return smart;
 }
 
@@ -207,6 +352,3 @@ void MEM_SmartDeallocate(MEM_Smart *smart, void *memory)
     }
   }
 }
-
-
-#endif

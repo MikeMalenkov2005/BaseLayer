@@ -42,6 +42,25 @@ typedef struct MEM_ArenaLevel
 MEM_ArenaLevel MEM_ArenaLevelInit(MEM_Arena *arena);
 void MEM_ArenaLevelFree(MEM_ArenaLevel level);
 
+#define MEM_HEAP_ALIGNMENT    16
+#define MEM_HEAP_DEFAULT_SIZE GiB(1)
+#define MEM_HEAP_COMMIT_SIZE  KiB(8)
+
+typedef struct MEM_Heap
+{
+  U8 *memory;
+  UZ size;
+  UZ commited;
+} MEM_Heap;
+
+MEM_Heap MEM_HeapInit(UZ size);
+void MEM_HeapClear(MEM_Heap *heap);
+void MEM_HeapFree(MEM_Heap *heap);
+
+void *MEM_HeapAllocate(MEM_Heap *heap, UZ size);
+void *MEM_HeapReallocate(MEM_Heap *heap, void *memory, UZ size);
+void MEM_HeapDeallocate(MEM_Heap *heap, void *memory);
+
 typedef void *MEM_AllocateCallback(PTR data, UZ size);
 typedef void *MEM_ReallocateCallback(PTR data, void *memory, UZ size);
 typedef void MEM_DeallocateCallback(PTR data, void *memory);
@@ -75,7 +94,7 @@ void MEM_DefaultDeallocate(PTR ignored, void *memory);
 #endif
 
 #define MEM_FromArena(arena) ((MEM) { (PTR)MEM_ArenaAllocate, (PTR)MEM_ArenaReallocate, (PTR)MEM_ArenaDeallocate, (arena) })
-
+#define MEM_FromHeap(heap) ((MEM) { (PTR)MEM_HeapAllocate, (PTR)MEM_HeapReallocate, (PTR)MEM_HeapDeallocate, (heap) })
 #define MEM_From_MEM(mem) ((MEM) { (PTR)MEM_Allocate, (PTR)MEM_Reallocate, (PTR)MEM_Deallocate, (mem) })
 
 #define MEM_SMART_INCREMENT 16
